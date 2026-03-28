@@ -69,7 +69,7 @@
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///C:/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///C:/flutter_windows_3.35.3-stable/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
