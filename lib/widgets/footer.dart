@@ -1,13 +1,21 @@
 // ================================================================
-//  widgets/footer.dart  —  4-column footer matching Replit design
+//  widgets/footer.dart  —  4-column footer with working links
 // ================================================================
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'header.dart'; // kTeal
 
 const Color _kNavy = Color(0xFF0A1828);
+
+const _kFooterLinks = <(String, String)>[
+  ('Home', '/'),
+  ('About Us', '/about'),
+  ('Services', '/services'),
+  ('Contact Us', '/contact'),
+];
 
 class AppFooter extends StatelessWidget {
   const AppFooter({super.key});
@@ -29,7 +37,6 @@ class AppFooter extends StatelessWidget {
       color: _kNavy,
       child: Column(
         children: [
-          // ── MAIN GRID ────────────────────────────────────────────
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: isWide ? 80 : 24,
@@ -41,9 +48,9 @@ class AppFooter extends StatelessWidget {
                     children: [
                       SizedBox(width: 260, child: _buildBrand()),
                       const SizedBox(width: 40),
-                      Expanded(child: _buildQuickLinks()),
+                      Expanded(child: _buildQuickLinks(context)),
                       Expanded(flex: 2, child: _buildGetInTouch()),
-                      SizedBox(width: 220, child: _buildCTA()),
+                      SizedBox(width: 220, child: _buildCTA(context)),
                     ],
                   )
                 : Column(
@@ -54,18 +61,16 @@ class AppFooter extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(child: _buildQuickLinks()),
+                          Expanded(child: _buildQuickLinks(context)),
                           const SizedBox(width: 32),
                           Expanded(flex: 2, child: _buildGetInTouch()),
                         ],
                       ),
                       const SizedBox(height: 40),
-                      _buildCTA(),
+                      _buildCTA(context),
                     ],
                   ),
           ),
-
-          // ── BOTTOM BAR ───────────────────────────────────────────
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
@@ -81,46 +86,38 @@ class AppFooter extends StatelessWidget {
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "© 2026 Glowora Clinic. All rights reserved.",
-                        style: GoogleFonts.nunito(
-                            color: Colors.white38, fontSize: 13),
-                      ),
-                      Row(
-                        children: [
-                          _bottomLink("Privacy Policy"),
-                          const SizedBox(width: 28),
-                          _bottomLink("Terms of Service"),
-                        ],
-                      ),
+                      Text("© 2026 Dr Ravinder's Clinic. All rights reserved.",
+                          style: GoogleFonts.nunito(
+                              color: Colors.white38, fontSize: 13)),
+                      Row(children: [
+                        _bottomLink("Privacy Policy"),
+                        const SizedBox(width: 28),
+                        _bottomLink("Terms of Service"),
+                      ]),
                     ],
                   )
-                : Column(
-                    children: [
-                      Text(
-                        "© 2026 Glowora Clinic. All rights reserved.",
+                : Column(children: [
+                    Text("© 2026 Dr Ravinder's Clinic. All rights reserved.",
                         style: GoogleFonts.nunito(
                             color: Colors.white38, fontSize: 13),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _bottomLink("Privacy Policy"),
-                          const SizedBox(width: 24),
-                          _bottomLink("Terms of Service"),
-                        ],
-                      ),
-                    ],
-                  ),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 16,
+                      runSpacing: 6,
+                      children: [
+                        _bottomLink("Privacy Policy"),
+                        _bottomLink("Terms of Service"),
+                      ],
+                    )
+                  ]),
           ),
         ],
       ),
     );
   }
 
-  // ── COLUMN 1: BRAND ───────────────────────────────────────────
   Widget _buildBrand() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,23 +140,17 @@ class AppFooter extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "Dr. Ravinder's",
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                Text(
-                  "GLOWORA CLINIC",
-                  style: GoogleFonts.nunito(
-                    fontSize: 9,
-                    color: kTeal,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.8,
-                  ),
-                ),
+                Text("Dr. Ravinder's",
+                    style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontStyle: FontStyle.italic)),
+                Text("GLOWORA CLINIC",
+                    style: GoogleFonts.nunito(
+                        fontSize: 9,
+                        color: kTeal,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.8)),
               ],
             ),
           ],
@@ -168,10 +159,7 @@ class AppFooter extends StatelessWidget {
         Text(
           "Premium dental and dermatology care\nserving Kartarpur, Punjab. Where\nmodern medicine meets compassionate\ncare to reveal your best self.",
           style: GoogleFonts.nunito(
-            color: Colors.white54,
-            fontSize: 13.5,
-            height: 1.7,
-          ),
+              color: Colors.white54, fontSize: 13.5, height: 1.7),
         ),
         const SizedBox(height: 24),
         Row(
@@ -188,83 +176,76 @@ class AppFooter extends StatelessWidget {
     );
   }
 
-  // ── COLUMN 2: QUICK LINKS ─────────────────────────────────────
-  Widget _buildQuickLinks() {
+  Widget _buildQuickLinks(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Quick Links",
-          style: GoogleFonts.nunito(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text("Quick Links",
+            style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w700)),
         const SizedBox(height: 20),
-        for (final label in ["Home", "About Us", "Services", "Contact Us"])
+        for (final item in _kFooterLinks)
           Padding(
             padding: const EdgeInsets.only(bottom: 14),
-            child: Text(
-              label,
-              style: GoogleFonts.nunito(color: Colors.white54, fontSize: 14),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => context.go(item.$2),
+                child: Text(item.$1,
+                    style: GoogleFonts.nunito(
+                        color: Colors.white54, fontSize: 14)),
+              ),
             ),
           ),
       ],
     );
   }
 
-  // ── COLUMN 3: GET IN TOUCH ────────────────────────────────────
   Widget _buildGetInTouch() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Get in Touch",
-          style: GoogleFonts.nunito(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text("Get in Touch",
+            style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w700)),
         const SizedBox(height: 20),
         _touchRow(
           icon: Icons.location_on_rounded,
           text: "Kartarpur, Jalandhar,\nPunjab, India 144801",
         ),
         const SizedBox(height: 16),
-        _touchRow(
-          icon: Icons.phone_rounded,
-          text: "+91 94636 29128",
+        GestureDetector(
+          onTap: () => _launch("tel:+919463629128"),
+          child: _touchRow(icon: Icons.phone_rounded, text: "+91 94636 29128"),
         ),
         const SizedBox(height: 16),
         _touchRow(
           icon: Icons.access_time_rounded,
-          text: "Mon - Sat: 9:00 AM - 7:00 PM",
+          text: "Mon - Sat: 9:00 AM - 5:00 PM",
           subText: "24/7 EMERGENCY FOR PATIENTS",
         ),
       ],
     );
   }
 
-  // ── COLUMN 4: CTA ─────────────────────────────────────────────
-  Widget _buildCTA() {
+  Widget _buildCTA(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Ready to smile?",
-          style: GoogleFonts.dmSerifDisplay(
-            color: Colors.white,
-            fontSize: 22,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
+        Text("Ready to smile?",
+            style: GoogleFonts.dmSerifDisplay(
+                color: Colors.white,
+                fontSize: 22,
+                fontStyle: FontStyle.italic)),
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () => context.go('/contact'),
             style: ElevatedButton.styleFrom(
               backgroundColor: kTeal,
               foregroundColor: Colors.white,
@@ -299,12 +280,8 @@ class AppFooter extends StatelessWidget {
     );
   }
 
-  // ── HELPERS ───────────────────────────────────────────────────
-  Widget _touchRow({
-    required IconData icon,
-    required String text,
-    String? subText,
-  }) {
+  Widget _touchRow(
+      {required IconData icon, required String text, String? subText}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -329,11 +306,10 @@ class AppFooter extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(subText,
                     style: GoogleFonts.nunito(
-                      color: kTeal,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.4,
-                    )),
+                        color: kTeal,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4)),
               ],
             ],
           ),

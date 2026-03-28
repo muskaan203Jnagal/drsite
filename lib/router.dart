@@ -6,6 +6,7 @@ import 'pages/home.dart';
 import 'pages/about.dart';
 import 'sections/services.dart';
 import 'pages/contact.dart';
+import 'sections/booking.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -36,6 +37,13 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => AppLayout(
         currentRoute: '/contact',
         child: const ContactPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/booking',
+      builder: (context, state) => AppLayout(
+        currentRoute: '/booking',
+        child: const BookingPage(),
       ),
     ),
   ],

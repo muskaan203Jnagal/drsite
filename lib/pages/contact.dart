@@ -1,5 +1,5 @@
 // ================================================================
-//  pages/contact.dart  —  Contact Us Page (matching Replit design)
+//  pages/contact.dart  —  Contact Us Page (overflow-fixed)
 // ================================================================
 
 import 'package:flutter/material.dart';
@@ -26,7 +26,8 @@ class ContactPage extends StatefulWidget {
   State<ContactPage> createState() => _ContactPageState();
 }
 
-class _ContactPageState extends State<ContactPage> {
+class _ContactPageState extends State<ContactPage>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
@@ -36,12 +37,22 @@ class _ContactPageState extends State<ContactPage> {
   int _msgLength = 0;
   bool _submitted = false;
 
+  late AnimationController _ctrl;
+  late Animation<double> _fade;
+  late Animation<Offset> _slide;
+
   @override
   void initState() {
     super.initState();
     _msgCtrl.addListener(() {
       setState(() => _msgLength = _msgCtrl.text.length);
     });
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700))
+      ..forward();
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
   }
 
   @override
@@ -50,6 +61,7 @@ class _ContactPageState extends State<ContactPage> {
     _phoneCtrl.dispose();
     _emailCtrl.dispose();
     _msgCtrl.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
@@ -58,8 +70,8 @@ class _ContactPageState extends State<ContactPage> {
       if (_selectedService == _kServices[0]) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Please select a service",
-                style: GoogleFonts.nunito()),
+            content:
+                Text("Please select a service", style: GoogleFonts.nunito()),
             backgroundColor: Colors.redAccent,
           ),
         );
@@ -82,89 +94,96 @@ class _ContactPageState extends State<ContactPage> {
     final isWide = width > 900;
 
     return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(top: kNavBarHeight),
-        child: Column(
-          children: [
-            // ── HERO HEADING ─────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isWide ? 80 : 24,
-                vertical: isWide ? 64 : 48,
-              ),
-              child: Column(
-                children: [
-                  // "Get in Touch" — two-tone heading
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Get in ",
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: isWide ? 64 : 42,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        TextSpan(
-                          text: "Touch",
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: isWide ? 64 : 42,
-                            color: kTeal,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ),
+      child: FadeTransition(
+        opacity: _fade,
+        child: SlideTransition(
+          position: _slide,
+          child: Padding(
+            padding: EdgeInsets.only(top: kNavBarHeight),
+            child: Column(
+              children: [
+                // ── HERO HEADING ──────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isWide ? 80 : 24,
+                    vertical: isWide ? 64 : 48,
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Have a question or ready to book your appointment? Fill out the form below or\nreach us directly.",
-                    style: GoogleFonts.nunito(
-                        color: Colors.white60, fontSize: 16, height: 1.6),
-                    textAlign: TextAlign.center,
+                  child: Column(
+                    children: [
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Get in ",
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: isWide ? 64 : 42,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Touch",
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: isWide ? 64 : 42,
+                                color: kTeal,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Have a question or ready to book your appointment?\nFill out the form below or reach us directly.",
+                        style: GoogleFonts.nunito(
+                            color: Colors.white60,
+                            fontSize: isWide ? 16 : 14,
+                            height: 1.6),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            // ── MAIN CONTENT ─────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isWide ? 80 : 24,
-              ),
-              child: isWide
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(flex: 5, child: _buildForm()),
-                        const SizedBox(width: 32),
-                        Expanded(flex: 4, child: _buildInfoPanel()),
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        _buildForm(),
-                        const SizedBox(height: 32),
-                        _buildInfoPanel(),
-                      ],
-                    ),
-            ),
+                // ── MAIN CONTENT ──────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isWide ? 80 : 24,
+                  ),
+                  child: isWide
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(flex: 5, child: _buildForm(isWide)),
+                            const SizedBox(width: 32),
+                            Expanded(flex: 4, child: _buildInfoPanel()),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            _buildForm(isWide),
+                            const SizedBox(height: 32),
+                            _buildInfoPanel(),
+                          ],
+                        ),
+                ),
 
-            const SizedBox(height: 80),
-          ],
+                const SizedBox(height: 80),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  // ── FORM ──────────────────────────────────────────────────────
-  Widget _buildForm() {
+  // ── FORM ───────────────────────────────────────────────────────
+  Widget _buildForm(bool isWide) {
     if (_submitted) return _buildSuccessCard();
 
     return Container(
-      padding: const EdgeInsets.all(36),
+      padding: EdgeInsets.all(isWide ? 36 : 24),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.06),
         borderRadius: BorderRadius.circular(20),
@@ -185,69 +204,122 @@ class _ContactPageState extends State<ContactPage> {
             ),
             const SizedBox(height: 28),
 
-            // Name + Phone row
-            Row(
-              children: [
-                Expanded(
-                  child: _field(
-                    label: "FULL NAME",
-                    hint: "John Doe",
-                    controller: _nameCtrl,
-                    validator: (v) => v!.isEmpty ? "Name required" : null,
+            // ── Name + Phone: responsive row/column ──
+            LayoutBuilder(builder: (ctx, constraints) {
+              final narrow = constraints.maxWidth < 480;
+              if (narrow) {
+                return Column(
+                  children: [
+                    _field(
+                      label: "FULL NAME",
+                      hint: "John Doe",
+                      controller: _nameCtrl,
+                      validator: (v) => v!.isEmpty ? "Name required" : null,
+                    ),
+                    const SizedBox(height: 16),
+                    _field(
+                      label: "PHONE NUMBER",
+                      hint: "+91 94636 29128",
+                      controller: _phoneCtrl,
+                      keyboardType: TextInputType.phone,
+                      validator: (v) => v!.isEmpty ? "Phone required" : null,
+                    ),
+                  ],
+                );
+              }
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _field(
+                      label: "FULL NAME",
+                      hint: "John Doe",
+                      controller: _nameCtrl,
+                      validator: (v) => v!.isEmpty ? "Name required" : null,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _field(
-                    label: "PHONE NUMBER",
-                    hint: "+91 94636 29128",
-                    controller: _phoneCtrl,
-                    keyboardType: TextInputType.phone,
-                    validator: (v) => v!.isEmpty ? "Phone required" : null,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _field(
+                      label: "PHONE NUMBER",
+                      hint: "+91 94636 29128",
+                      controller: _phoneCtrl,
+                      keyboardType: TextInputType.phone,
+                      validator: (v) => v!.isEmpty ? "Phone required" : null,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              );
+            }),
+
             const SizedBox(height: 20),
 
-            // Email + Service row
-            Row(
-              children: [
-                Expanded(
-                  child: _field(
-                    label: "EMAIL ADDRESS",
-                    hint: "john@example.com",
-                    controller: _emailCtrl,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (v) {
-                      if (v!.isEmpty) return "Email required";
-                      if (!v.contains('@')) return "Enter valid email";
-                      return null;
-                    },
+            // ── Email + Service: responsive row/column ──
+            LayoutBuilder(builder: (ctx, constraints) {
+              final narrow = constraints.maxWidth < 480;
+              if (narrow) {
+                return Column(
+                  children: [
+                    _field(
+                      label: "EMAIL ADDRESS",
+                      hint: "john@example.com",
+                      controller: _emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v!.isEmpty) return "Email required";
+                        if (!v.contains('@')) return "Enter valid email";
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    _buildServiceDropdown(),
+                  ],
+                );
+              }
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _field(
+                      label: "EMAIL ADDRESS",
+                      hint: "john@example.com",
+                      controller: _emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v!.isEmpty) return "Email required";
+                        if (!v.contains('@')) return "Enter valid email";
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(child: _buildServiceDropdown()),
-              ],
-            ),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildServiceDropdown()),
+                ],
+              );
+            }),
+
             const SizedBox(height: 20),
 
-            // Message with char counter
+            // ── Message with char counter ──
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "YOUR MESSAGE",
-                      style: GoogleFonts.nunito(
-                        color: Colors.white54,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.8,
+                    Flexible(
+                      child: Text(
+                        "YOUR MESSAGE",
+                        style: GoogleFonts.nunito(
+                          color: Colors.white54,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.8,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Text(
                       "$_msgLength/500",
                       style: GoogleFonts.nunito(
@@ -260,7 +332,10 @@ class _ContactPageState extends State<ContactPage> {
                   controller: _msgCtrl,
                   maxLines: 6,
                   maxLength: 500,
-                  buildCounter: (_, {required currentLength, required isFocused, maxLength}) =>
+                  buildCounter: (_,
+                          {required currentLength,
+                          required isFocused,
+                          maxLength}) =>
                       const SizedBox.shrink(),
                   validator: (v) =>
                       v!.isEmpty ? "Please write a message" : null,
@@ -327,10 +402,10 @@ class _ContactPageState extends State<ContactPage> {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _selectedService,
+          isExpanded: true, // ← FIX: prevents overflow
           dropdownColor: const Color(0xFF1A2D3F),
           style: GoogleFonts.nunito(color: Colors.white, fontSize: 14),
-          icon:
-              const Icon(Icons.keyboard_arrow_down, color: Colors.white38),
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white38),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white.withOpacity(0.06),
@@ -343,13 +418,15 @@ class _ContactPageState extends State<ContactPage> {
           items: _kServices
               .map((s) => DropdownMenuItem(
                     value: s,
-                    child: Text(s,
-                        style: GoogleFonts.nunito(
-                          color: s == _kServices[0]
-                              ? Colors.white38
-                              : Colors.white,
-                          fontSize: 14,
-                        )),
+                    child: Text(
+                      s,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.nunito(
+                        color:
+                            s == _kServices[0] ? Colors.white38 : Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
                   ))
               .toList(),
           onChanged: (v) => setState(() => _selectedService = v!),
@@ -433,9 +510,7 @@ class _ContactPageState extends State<ContactPage> {
           Text(
             "Request Sent!",
             style: GoogleFonts.dmSerifDisplay(
-                color: Colors.white,
-                fontSize: 32,
-                fontStyle: FontStyle.italic),
+                color: Colors.white, fontSize: 32, fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 10),
           Text(
@@ -457,7 +532,7 @@ class _ContactPageState extends State<ContactPage> {
     );
   }
 
-  // ── INFO PANEL ────────────────────────────────────────────────
+  // ── INFO PANEL ─────────────────────────────────────────────────
   Widget _buildInfoPanel() {
     return Column(
       children: [
@@ -483,70 +558,64 @@ class _ContactPageState extends State<ContactPage> {
           icon: Icons.access_time_rounded,
           title: "Operating Hours",
           lines: const [
-            "Mon - Sat:   9:00 AM - 7:00",
+            "Mon - Sat:   9:00 AM – 7:00 PM",
             "Sunday:        Closed",
           ],
         ),
         const SizedBox(height: 16),
 
-        // ── GOOGLE MAP EMBED ────────────────────────────────────
+        // ── MAP PLACEHOLDER ─────────────────────────────────────
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: SizedBox(
             height: 220,
-            child: Stack(
-              children: [
-                // iframe embed via HtmlElementView on web, fallback for other
-                Container(
-                  color: Colors.white.withOpacity(0.04),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.map_rounded,
-                            color: kTeal.withOpacity(0.5), size: 40),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Kartarpur, Jalandhar",
-                          style: GoogleFonts.nunito(
-                              color: Colors.white38, fontSize: 13),
-                        ),
-                        const SizedBox(height: 12),
-                        GestureDetector(
-                          onTap: () => _launch(
-                              "https://www.google.com/maps/search/Kartarpur+Jalandhar+Punjab"),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: kTeal.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: kTeal.withOpacity(0.3)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.open_in_new,
-                                    color: kTeal, size: 14),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "Open in Maps",
-                                  style: GoogleFonts.nunito(
-                                    color: kTeal,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+            width: double.infinity,
+            child: Container(
+              color: Colors.white.withOpacity(0.04),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.map_rounded,
+                        color: kTeal.withOpacity(0.5), size: 40),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Kartarpur, Jalandhar",
+                      style: GoogleFonts.nunito(
+                          color: Colors.white38, fontSize: 13),
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: () => _launch(
+                          "https://www.google.com/maps/search/Kartarpur+Jalandhar+Punjab"),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: kTeal.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: kTeal.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.open_in_new, color: kTeal, size: 14),
+                            const SizedBox(width: 6),
+                            Text(
+                              "Open in Maps",
+                              style: GoogleFonts.nunito(
+                                color: kTeal,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -555,7 +624,7 @@ class _ContactPageState extends State<ContactPage> {
   }
 }
 
-// ── INFO CARD WIDGET ──────────────────────────────────────────────
+// ── INFO CARD WIDGET ───────────────────────────────────────────────
 class _InfoCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -585,7 +654,6 @@ class _InfoCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icon circle
             Container(
               width: 52,
               height: 52,

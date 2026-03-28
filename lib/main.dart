@@ -10,7 +10,6 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Glowora Clinic',
       routerConfig: appRouter,
     );
   }
