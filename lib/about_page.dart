@@ -972,12 +972,15 @@ class _AboutFooterCTA extends StatelessWidget {
     return _FadeSlideIn(
       delay: const Duration(milliseconds: 100),
       child: Container(
+        width: double.infinity,
         color: kDeepBlue,
         padding: EdgeInsets.symmetric(
           vertical: 80,
           horizontal: isMobile ? 24 : 80,
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center, // 👈 ADD THIS
+          mainAxisSize: MainAxisSize.max,
           children: [
             const Text(
               "Dr. Ravinder's\nDental & Skin Aesthetic Clinic",
