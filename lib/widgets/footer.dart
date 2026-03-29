@@ -1,17 +1,19 @@
 // ================================================================
-//  widgets/footer.dart  —  4-column footer with working links
+//  widgets/footer.dart  —  4-column footer (Luxury Design)
+//  Palette: Deep Blue #0A2540 | Rose #E8AEB7 | Gold #CFA15D
 // ================================================================
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'header.dart'; // kTeal
+import 'header.dart'; // kTeal, kDeepBlue, kSoftRose, kGoldAccent
 
-const Color _kNavy = Color(0xFF0A1828);
+// Footer uses the deep-blue navy background
+const Color _kFooterBg = Color(0xFF071A16);
 
 const _kFooterLinks = <(String, String)>[
-  ('Home', '/'),
+  ('Home', '/home'),
   ('About Us', '/about'),
   ('Services', '/services'),
   ('Contact Us', '/contact'),
@@ -23,7 +25,7 @@ class AppFooter extends StatelessWidget {
   void _launch(String url) async {
     final uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $url');
+      debugPrint('Could not launch $url');
     }
   }
 
@@ -34,7 +36,7 @@ class AppFooter extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      color: _kNavy,
+      color: _kFooterBg,
       child: Column(
         children: [
           Padding(
@@ -79,7 +81,7 @@ class AppFooter extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               border: Border(
-                top: BorderSide(color: Colors.white.withOpacity(0.08)),
+                top: BorderSide(color: Colors.white.withOpacity(0.07)),
               ),
             ),
             child: isWide
@@ -129,11 +131,11 @@ class AppFooter extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: kTeal,
+                color: kSoftRose,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child:
-                  const Icon(Icons.add_rounded, color: Colors.white, size: 26),
+              child: const Icon(Icons.medical_services_rounded,
+                  color: kDeepBlue, size: 22),
             ),
             const SizedBox(width: 12),
             Column(
@@ -141,14 +143,15 @@ class AppFooter extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text("Dr. Ravinder's",
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.playfairDisplay(
                         fontSize: 18,
                         color: Colors.white,
-                        fontStyle: FontStyle.italic)),
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w600)),
                 Text("GLOWORA CLINIC",
                     style: GoogleFonts.nunito(
                         fontSize: 9,
-                        color: kTeal,
+                        color: kSoftRose,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.8)),
               ],
@@ -225,7 +228,7 @@ class AppFooter extends StatelessWidget {
         const SizedBox(height: 16),
         _touchRow(
           icon: Icons.access_time_rounded,
-          text: "Mon - Sat: 9:00 AM - 5:00 PM",
+          text: "Mon - Sat: 9:00 AM - 7:00 PM",
           subText: "24/7 EMERGENCY FOR PATIENTS",
         ),
       ],
@@ -236,19 +239,20 @@ class AppFooter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Ready to smile?",
-            style: GoogleFonts.dmSerifDisplay(
+        Text("Ready to glow?",
+            style: GoogleFonts.playfairDisplay(
                 color: Colors.white,
-                fontSize: 22,
-                fontStyle: FontStyle.italic)),
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w600)),
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () => context.go('/contact'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: kTeal,
-              foregroundColor: Colors.white,
+              backgroundColor: kSoftRose,
+              foregroundColor: kDeepBlue,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -289,10 +293,10 @@ class AppFooter extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: kTeal.withOpacity(0.15),
+            color: kSoftRose.withOpacity(0.12),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: kTeal, size: 17),
+          child: Icon(icon, color: kSoftRose, size: 17),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -306,7 +310,7 @@ class AppFooter extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(subText,
                     style: GoogleFonts.nunito(
-                        color: kTeal,
+                        color: kSoftRose,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.4)),
@@ -326,9 +330,9 @@ class AppFooter extends StatelessWidget {
         height: 38,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
+          border: Border.all(color: kSoftRose.withOpacity(0.3)),
         ),
-        child: Icon(icon, color: Colors.white70, size: 18),
+        child: Icon(icon, color: Colors.white60, size: 18),
       ),
     );
   }

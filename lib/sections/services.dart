@@ -9,10 +9,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/header.dart'; // kNavBarHeight
 
 // ── Palette ───────────────────────────────────────────────────────
-const Color _kBlue = Color(0xFF0A2540);
-const Color _kRose = Color(0xFFE8AEB7);
-const Color _kGold = Color(0xFFCFA15D);
-const Color _kIvory = Color(0xFFFAFAF8);
+const Color _kDark = Color(0xFF0A2E2A);
+const Color _kTealLight = Color(0xFF5EEAD4);
+const Color _kTeal = Color(0xFF0D9E8C);
+const Color _kIvory = Color(0xFFF0FDFA);
 const Color _kCard = Color(0xFFFFFFFF);
 
 // ── Service data ──────────────────────────────────────────────────
@@ -127,7 +127,8 @@ class _ServicesPageState extends State<ServicesPage>
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: isWide ? 80 : 24),
-                child: Divider(color: _kRose.withOpacity(0.45), thickness: 1),
+                child:
+                    Divider(color: _kTealLight.withOpacity(0.45), thickness: 1),
               ),
               const SizedBox(height: 8),
               FadeTransition(
@@ -174,14 +175,14 @@ class _ServicesPageState extends State<ServicesPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: _kGold.withOpacity(0.1),
+              color: _kTeal.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _kGold.withOpacity(0.4)),
+              border: Border.all(color: _kTeal.withOpacity(0.4)),
             ),
             child: Text(
               'WHAT WE OFFER',
               style: GoogleFonts.nunito(
-                color: _kGold,
+                color: _kTeal,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.8,
@@ -196,14 +197,14 @@ class _ServicesPageState extends State<ServicesPage>
                 text: 'Our ',
                 style: GoogleFonts.dmSerifDisplay(
                   fontSize: isWide ? 64 : 42,
-                  color: _kBlue,
+                  color: _kDark,
                 ),
               ),
               TextSpan(
                 text: 'Services',
                 style: GoogleFonts.dmSerifDisplay(
                   fontSize: isWide ? 64 : 42,
-                  color: _kRose,
+                  color: _kTealLight,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -215,7 +216,7 @@ class _ServicesPageState extends State<ServicesPage>
             child: Text(
               "From a sparkling smile to radiant skin — Dr. Ravinder's Glowora Clinic offers premium dental and dermatology care at every step of your journey.",
               style: GoogleFonts.nunito(
-                  color: _kBlue.withOpacity(0.55),
+                  color: _kDark.withOpacity(0.55),
                   fontSize: isWide ? 16 : 14,
                   height: 1.75),
               textAlign: TextAlign.center,
@@ -256,12 +257,12 @@ class _ServicesPageState extends State<ServicesPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
-              color: _kRose.withOpacity(0.2),
+              color: _kTealLight.withOpacity(0.2),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(tag,
                 style: GoogleFonts.nunito(
-                    color: _kBlue,
+                    color: _kDark,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.6)),
@@ -272,13 +273,13 @@ class _ServicesPageState extends State<ServicesPage>
               TextSpan(
                 text: '$title ',
                 style: GoogleFonts.dmSerifDisplay(
-                    fontSize: isWide ? 42 : 30, color: _kBlue),
+                    fontSize: isWide ? 42 : 30, color: _kDark),
               ),
               TextSpan(
                 text: accent,
                 style: GoogleFonts.dmSerifDisplay(
                     fontSize: isWide ? 42 : 30,
-                    color: _kRose,
+                    color: _kTealLight,
                     fontStyle: FontStyle.italic),
               ),
             ]),
@@ -288,7 +289,7 @@ class _ServicesPageState extends State<ServicesPage>
             constraints: const BoxConstraints(maxWidth: 520),
             child: Text(subtitle,
                 style: GoogleFonts.nunito(
-                    color: _kBlue.withOpacity(0.55),
+                    color: _kDark.withOpacity(0.55),
                     fontSize: 14,
                     height: 1.7)),
           ),
@@ -311,7 +312,7 @@ class _ServicesPageState extends State<ServicesPage>
           horizontal: isWide ? 80 : 24, vertical: isWide ? 16 : 12),
       padding: EdgeInsets.all(isWide ? 60 : 36),
       decoration: BoxDecoration(
-        color: _kBlue,
+        color: _kDark,
         borderRadius: BorderRadius.circular(24),
       ),
       child: isWide
@@ -457,17 +458,17 @@ class _ServiceCardState extends State<_ServiceCard>
           width: cardWidth,
           padding: const EdgeInsets.all(26),
           decoration: BoxDecoration(
-            color: _hovered ? _kBlue : _kCard,
+            color: _hovered ? _kDark : _kCard,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _hovered ? _kBlue : _kRose.withOpacity(0.35),
+              color: _hovered ? _kDark : _kTealLight.withOpacity(0.35),
               width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
                 color: _hovered
-                    ? _kBlue.withOpacity(0.2)
-                    : _kBlue.withOpacity(0.06),
+                    ? _kDark.withOpacity(0.2)
+                    : _kDark.withOpacity(0.06),
                 blurRadius: _hovered ? 24 : 10,
                 offset: const Offset(0, 6),
               )
@@ -482,13 +483,13 @@ class _ServiceCardState extends State<_ServiceCard>
                 height: 50,
                 decoration: BoxDecoration(
                   color: _hovered
-                      ? _kRose.withOpacity(0.18)
-                      : _kRose.withOpacity(0.2),
+                      ? _kTealLight.withOpacity(0.18)
+                      : _kTealLight.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   widget.item.icon,
-                  color: _hovered ? _kRose : _kBlue,
+                  color: _hovered ? _kTealLight : _kDark,
                   size: 22,
                 ),
               ),
@@ -496,7 +497,7 @@ class _ServiceCardState extends State<_ServiceCard>
               Text(
                 widget.item.title,
                 style: GoogleFonts.nunito(
-                  color: _hovered ? Colors.white : _kBlue,
+                  color: _hovered ? Colors.white : _kDark,
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
@@ -505,7 +506,7 @@ class _ServiceCardState extends State<_ServiceCard>
               Text(
                 widget.item.desc,
                 style: GoogleFonts.nunito(
-                  color: _hovered ? Colors.white60 : _kBlue.withOpacity(0.55),
+                  color: _hovered ? Colors.white60 : _kDark.withOpacity(0.55),
                   fontSize: 13,
                   height: 1.65,
                 ),
@@ -530,11 +531,11 @@ class _StatChip extends StatelessWidget {
       children: [
         Text(value,
             style: GoogleFonts.dmSerifDisplay(
-                color: _kBlue, fontSize: 34, fontStyle: FontStyle.italic)),
+                color: _kDark, fontSize: 34, fontStyle: FontStyle.italic)),
         const SizedBox(height: 4),
         Text(label,
             style: GoogleFonts.nunito(
-                color: _kBlue.withOpacity(0.45),
+                color: _kDark.withOpacity(0.45),
                 fontSize: 13,
                 fontWeight: FontWeight.w600)),
       ],
@@ -570,7 +571,7 @@ class _CTAButtonState extends State<_CTAButton> {
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
           decoration: BoxDecoration(
             color: widget.filled
-                ? (_hovered ? _kRose : Colors.white)
+                ? (_hovered ? _kTealLight : Colors.white)
                 : (_hovered
                     ? Colors.white.withOpacity(0.1)
                     : Colors.transparent),
@@ -583,7 +584,7 @@ class _CTAButtonState extends State<_CTAButton> {
             widget.label,
             style: GoogleFonts.nunito(
               color: widget.filled
-                  ? (_hovered ? Colors.white : _kBlue)
+                  ? (_hovered ? Colors.white : _kDark)
                   : Colors.white,
               fontSize: 14,
               fontWeight: FontWeight.w700,
