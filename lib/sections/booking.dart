@@ -8,10 +8,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/header.dart'; // kNavBarHeight
 
 // ── Palette ───────────────────────────────────────────────────────
-const Color _kBlue = Color(0xFF0A2540);
-const Color _kRose = Color(0xFFE8AEB7);
-const Color _kGold = Color(0xFFCFA15D);
-const Color _kIvory = Color(0xFFFAFAF8);
+const Color _kDark = Color(0xFF0A2E2A);
+const Color _kTealLight = Color(0xFF5EEAD4);
+const Color _kTeal = Color(0xFF0D9E8C);
+const Color _kIvory = Color(0xFFF0FDFA);
 const Color _kCard = Color(0xFFFFFFFF);
 
 // ── Data ──────────────────────────────────────────────────────────
@@ -182,14 +182,14 @@ class _BookingPageState extends State<BookingPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: _kGold.withOpacity(0.1),
+              color: _kTeal.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _kGold.withOpacity(0.4)),
+              border: Border.all(color: _kTeal.withOpacity(0.4)),
             ),
             child: Text(
               'EASY ONLINE BOOKING',
               style: GoogleFonts.nunito(
-                  color: _kGold,
+                  color: _kTeal,
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.8),
@@ -203,14 +203,14 @@ class _BookingPageState extends State<BookingPage>
                 text: 'Book an ',
                 style: GoogleFonts.dmSerifDisplay(
                     fontSize: isWide ? 56 : 38,
-                    color: _kBlue,
+                    color: _kDark,
                     fontWeight: FontWeight.w400),
               ),
               TextSpan(
                 text: 'Appointment',
                 style: GoogleFonts.dmSerifDisplay(
                     fontSize: isWide ? 56 : 38,
-                    color: _kRose,
+                    color: _kTealLight,
                     fontStyle: FontStyle.italic),
               ),
             ]),
@@ -219,7 +219,7 @@ class _BookingPageState extends State<BookingPage>
           Text(
             "Complete the steps below to schedule your visit with Dr. Ravinder.",
             style: GoogleFonts.nunito(
-                color: _kBlue.withOpacity(0.5),
+                color: _kDark.withOpacity(0.5),
                 fontSize: isWide ? 15 : 13,
                 height: 1.65),
             textAlign: TextAlign.center,
@@ -278,7 +278,7 @@ class _BookingPageState extends State<BookingPage>
           Text(
             '$_category Treatments',
             style: GoogleFonts.nunito(
-                color: _kBlue.withOpacity(0.4),
+                color: _kDark.withOpacity(0.4),
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.2),
@@ -320,7 +320,7 @@ class _BookingPageState extends State<BookingPage>
           Text(
             'AVAILABLE SLOTS',
             style: GoogleFonts.nunito(
-                color: _kBlue.withOpacity(0.4),
+                color: _kDark.withOpacity(0.4),
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.2),
@@ -448,10 +448,10 @@ class _BookingPageState extends State<BookingPage>
       decoration: BoxDecoration(
         color: _kCard,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: _kRose.withOpacity(0.4)),
+        border: Border.all(color: _kTealLight.withOpacity(0.4)),
         boxShadow: [
           BoxShadow(
-            color: _kBlue.withOpacity(0.07),
+            color: _kDark.withOpacity(0.07),
             blurRadius: 24,
             offset: const Offset(0, 8),
           )
@@ -469,24 +469,24 @@ class _BookingPageState extends State<BookingPage>
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: _kRose.withOpacity(0.15),
+                color: _kTealLight.withOpacity(0.15),
                 shape: BoxShape.circle,
-                border: Border.all(color: _kRose, width: 2),
+                border: Border.all(color: _kTealLight, width: 2),
               ),
-              child: const Icon(Icons.check_rounded, color: _kBlue, size: 38),
+              child: const Icon(Icons.check_rounded, color: _kDark, size: 38),
             ),
           ),
           const SizedBox(height: 28),
           Text(
             "Booking Confirmed!",
             style: GoogleFonts.dmSerifDisplay(
-                color: _kBlue, fontSize: 34, fontStyle: FontStyle.italic),
+                color: _kDark, fontSize: 34, fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 10),
           Text(
             "We've received your request and will confirm shortly via phone.",
             style: GoogleFonts.nunito(
-                color: _kBlue.withOpacity(0.5), fontSize: 15, height: 1.6),
+                color: _kDark.withOpacity(0.5), fontSize: 15, height: 1.6),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -498,7 +498,7 @@ class _BookingPageState extends State<BookingPage>
             decoration: BoxDecoration(
               color: _kIvory,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _kRose.withOpacity(0.3)),
+              border: Border.all(color: _kTealLight.withOpacity(0.3)),
             ),
             child: Column(
               children: [
@@ -534,8 +534,8 @@ class _BookingPageState extends State<BookingPage>
                 _pageCtrl.forward();
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: _kBlue,
-                side: BorderSide(color: _kBlue.withOpacity(0.25)),
+                foregroundColor: _kDark,
+                side: BorderSide(color: _kDark.withOpacity(0.25)),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -563,7 +563,7 @@ class _BookingPageState extends State<BookingPage>
       children: [
         Text(label,
             style: GoogleFonts.nunito(
-                color: _kBlue.withOpacity(0.45),
+                color: _kDark.withOpacity(0.45),
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.2)),
@@ -573,11 +573,11 @@ class _BookingPageState extends State<BookingPage>
           maxLines: maxLines,
           keyboardType: keyboard,
           validator: validator,
-          style: GoogleFonts.nunito(color: _kBlue, fontSize: 14),
+          style: GoogleFonts.nunito(color: _kDark, fontSize: 14),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.nunito(
-                color: _kBlue.withOpacity(0.3), fontSize: 14),
+                color: _kDark.withOpacity(0.3), fontSize: 14),
             filled: true,
             fillColor: _kIvory,
             contentPadding:
@@ -600,8 +600,8 @@ class _BookingPageState extends State<BookingPage>
         color: error
             ? Colors.redAccent
             : focused
-                ? _kBlue
-                : _kRose.withOpacity(0.45),
+                ? _kDark
+                : _kTealLight.withOpacity(0.45),
         width: focused || error ? 1.5 : 1,
       ),
     );
@@ -633,10 +633,10 @@ class _StepCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _kCard,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _kRose.withOpacity(0.35)),
+        border: Border.all(color: _kTealLight.withOpacity(0.35)),
         boxShadow: [
           BoxShadow(
-            color: _kBlue.withOpacity(0.06),
+            color: _kDark.withOpacity(0.06),
             blurRadius: 16,
             offset: const Offset(0, 4),
           )
@@ -653,13 +653,13 @@ class _StepCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _kRose.withOpacity(0.2),
+                  color: _kTealLight.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   stepNum,
                   style: GoogleFonts.dmSerifDisplay(
-                      color: _kBlue, fontSize: 14, fontStyle: FontStyle.italic),
+                      color: _kDark, fontSize: 14, fontStyle: FontStyle.italic),
                 ),
               ),
               const SizedBox(width: 12),
@@ -669,13 +669,13 @@ class _StepCard extends StatelessWidget {
                   children: [
                     Text(title,
                         style: GoogleFonts.nunito(
-                            color: _kBlue,
+                            color: _kDark,
                             fontSize: 20,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 3),
                     Text(subtitle,
                         style: GoogleFonts.nunito(
-                            color: _kBlue.withOpacity(0.4), fontSize: 13)),
+                            color: _kDark.withOpacity(0.4), fontSize: 13)),
                   ],
                 ),
               ),
@@ -707,7 +707,9 @@ class _StepIndicator extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
                 height: 2,
-                color: currentStep > stepIdx ? _kRose : _kBlue.withOpacity(0.1),
+                color: currentStep > stepIdx
+                    ? _kTealLight
+                    : _kDark.withOpacity(0.1),
               ),
             );
           }
@@ -720,19 +722,19 @@ class _StepIndicator extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               color: done
-                  ? _kBlue
+                  ? _kDark
                   : active
                       ? _kCard
                       : _kCard,
               shape: BoxShape.circle,
               border: Border.all(
-                color: done || active ? _kBlue : _kBlue.withOpacity(0.18),
+                color: done || active ? _kDark : _kDark.withOpacity(0.18),
                 width: active ? 2 : 1.5,
               ),
               boxShadow: active
                   ? [
                       BoxShadow(
-                        color: _kBlue.withOpacity(0.15),
+                        color: _kDark.withOpacity(0.15),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       )
@@ -746,7 +748,7 @@ class _StepIndicator extends StatelessWidget {
                   : Text(
                       '${idx + 1}',
                       style: GoogleFonts.nunito(
-                        color: active ? _kBlue : _kBlue.withOpacity(0.3),
+                        color: active ? _kDark : _kDark.withOpacity(0.3),
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -784,10 +786,10 @@ class _NextButton extends StatelessWidget {
             style:
                 GoogleFonts.nunito(fontSize: 14, fontWeight: FontWeight.w700)),
         style: ElevatedButton.styleFrom(
-          backgroundColor: _kBlue,
+          backgroundColor: _kDark,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: _kBlue.withOpacity(0.08),
-          disabledForegroundColor: _kBlue.withOpacity(0.3),
+          disabledBackgroundColor: _kDark.withOpacity(0.08),
+          disabledForegroundColor: _kDark.withOpacity(0.3),
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -812,9 +814,9 @@ class _BackButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: _kCard,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _kRose.withOpacity(0.5)),
+          border: Border.all(color: _kTealLight.withOpacity(0.5)),
         ),
-        child: Icon(Icons.arrow_back_rounded, color: _kBlue, size: 18),
+        child: Icon(Icons.arrow_back_rounded, color: _kDark, size: 18),
       ),
     );
   }
@@ -841,16 +843,16 @@ class _ServiceSelectTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: selected ? _kBlue : _kCard,
+          color: selected ? _kDark : _kCard,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: selected ? _kBlue : _kRose.withOpacity(0.4),
+            color: selected ? _kDark : _kTealLight.withOpacity(0.4),
             width: 1.2,
           ),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: _kBlue.withOpacity(0.15),
+                    color: _kDark.withOpacity(0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 3),
                   )
@@ -862,7 +864,7 @@ class _ServiceSelectTile extends StatelessWidget {
             Expanded(
               child: Text(label,
                   style: GoogleFonts.nunito(
-                    color: selected ? Colors.white : _kBlue,
+                    color: selected ? Colors.white : _kDark,
                     fontSize: 14,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   )),
@@ -873,9 +875,9 @@ class _ServiceSelectTile extends StatelessWidget {
               child: Container(
                 width: 20,
                 height: 20,
-                decoration:
-                    const BoxDecoration(color: _kRose, shape: BoxShape.circle),
-                child: const Icon(Icons.check_rounded, color: _kBlue, size: 12),
+                decoration: const BoxDecoration(
+                    color: _kTealLight, shape: BoxShape.circle),
+                child: const Icon(Icons.check_rounded, color: _kDark, size: 12),
               ),
             ),
           ],
@@ -905,17 +907,17 @@ class _ToggleChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: selected ? _kBlue : _kCard,
+          color: selected ? _kDark : _kCard,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: selected ? _kBlue : _kRose.withOpacity(0.4),
+            color: selected ? _kDark : _kTealLight.withOpacity(0.4),
             width: 1.2,
           ),
         ),
         child: Center(
           child: Text(label,
               style: GoogleFonts.nunito(
-                color: selected ? Colors.white : _kBlue.withOpacity(0.5),
+                color: selected ? Colors.white : _kDark.withOpacity(0.5),
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               )),
@@ -941,7 +943,7 @@ class _DatePicker extends StatelessWidget {
         Text(
           'SELECT DATE',
           style: GoogleFonts.nunito(
-              color: _kBlue.withOpacity(0.4),
+              color: _kDark.withOpacity(0.4),
               fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.2),
@@ -967,23 +969,23 @@ class _DatePicker extends StatelessWidget {
                   width: 58,
                   decoration: BoxDecoration(
                     color: isSel
-                        ? _kBlue
+                        ? _kDark
                         : isSun
                             ? _kIvory
                             : _kCard,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSel
-                          ? _kBlue
+                          ? _kDark
                           : isSun
-                              ? _kBlue.withOpacity(0.06)
-                              : _kRose.withOpacity(0.4),
+                              ? _kDark.withOpacity(0.06)
+                              : _kTealLight.withOpacity(0.4),
                       width: 1.2,
                     ),
                     boxShadow: isSel
                         ? [
                             BoxShadow(
-                              color: _kBlue.withOpacity(0.2),
+                              color: _kDark.withOpacity(0.2),
                               blurRadius: 10,
                               offset: const Offset(0, 3),
                             )
@@ -999,8 +1001,8 @@ class _DatePicker extends StatelessWidget {
                           color: isSel
                               ? Colors.white70
                               : isSun
-                                  ? _kBlue.withOpacity(0.2)
-                                  : _kBlue.withOpacity(0.4),
+                                  ? _kDark.withOpacity(0.2)
+                                  : _kDark.withOpacity(0.4),
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1012,8 +1014,8 @@ class _DatePicker extends StatelessWidget {
                           color: isSel
                               ? Colors.white
                               : isSun
-                                  ? _kBlue.withOpacity(0.2)
-                                  : _kBlue,
+                                  ? _kDark.withOpacity(0.2)
+                                  : _kDark,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1055,16 +1057,16 @@ class _TimeSlotChip extends StatelessWidget {
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? _kBlue : _kCard,
+          color: selected ? _kDark : _kCard,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: selected ? _kBlue : _kRose.withOpacity(0.4),
+            color: selected ? _kDark : _kTealLight.withOpacity(0.4),
             width: 1.2,
           ),
         ),
         child: Text(label,
             style: GoogleFonts.nunito(
-              color: selected ? Colors.white : _kBlue,
+              color: selected ? Colors.white : _kDark,
               fontSize: 13,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
             )),
@@ -1090,9 +1092,9 @@ class _BookingSummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _kRose.withOpacity(0.12),
+        color: _kTealLight.withOpacity(0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _kRose.withOpacity(0.4)),
+        border: Border.all(color: _kTealLight.withOpacity(0.4)),
       ),
       child: Row(
         children: [
@@ -1100,9 +1102,9 @@ class _BookingSummary extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-                color: _kRose.withOpacity(0.25), shape: BoxShape.circle),
+                color: _kTealLight.withOpacity(0.25), shape: BoxShape.circle),
             child: const Icon(Icons.event_available_rounded,
-                color: _kBlue, size: 18),
+                color: _kDark, size: 18),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -1111,14 +1113,14 @@ class _BookingSummary extends StatelessWidget {
               children: [
                 Text(service,
                     style: GoogleFonts.nunito(
-                        color: _kBlue,
+                        color: _kDark,
                         fontSize: 14,
                         fontWeight: FontWeight.w700),
                     overflow: TextOverflow.ellipsis),
                 Text(
                   '${date.day}/${date.month}/${date.year}  ·  $slot',
                   style: GoogleFonts.nunito(
-                      color: _kBlue.withOpacity(0.5), fontSize: 12),
+                      color: _kDark.withOpacity(0.5), fontSize: 12),
                 ),
               ],
             ),
@@ -1146,14 +1148,14 @@ class _ConfirmRow extends StatelessWidget {
             width: 90,
             child: Text(label,
                 style: GoogleFonts.nunito(
-                    color: _kBlue.withOpacity(0.4),
+                    color: _kDark.withOpacity(0.4),
                     fontSize: 13,
                     fontWeight: FontWeight.w600)),
           ),
           Expanded(
             child: Text(value,
                 style: GoogleFonts.nunito(
-                    color: _kBlue, fontSize: 13, fontWeight: FontWeight.w700),
+                    color: _kDark, fontSize: 13, fontWeight: FontWeight.w700),
                 overflow: TextOverflow.ellipsis),
           ),
         ],

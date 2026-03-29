@@ -1,3 +1,6 @@
+// ================================================================
+//  layout/app_layout.dart  —  Shell with floating NavBar + Footer
+// ================================================================
 
 import 'package:flutter/material.dart';
 import '../widgets/header.dart';
@@ -16,18 +19,17 @@ class AppLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A2540),
+      backgroundColor: const Color(0xFF0A2E2A),
       body: Stack(
         children: [
-          // ── [0] Scrollable page content + footer ─────────────
+          // ── [0] Scrollable content + footer ──────────────────
           SingleChildScrollView(
             child: Column(
               children: [
-                /// Page content (homepage/about/etc.)
-                /// Each page handles its own top padding (72px = navbar height)
+                // Page content (each page handles its own top-padding)
                 child,
 
-                /// Footer always at the bottom
+                // Footer always at the bottom
                 const AppFooter(),
               ],
             ),

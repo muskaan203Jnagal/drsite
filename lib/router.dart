@@ -1,5 +1,9 @@
+// ================================================================
+//  router.dart — GoRouter config
+//  FIX: added '/' redirect + all routes
+// ================================================================
+
 import 'package:go_router/go_router.dart';
-import 'package:flutter/material.dart';
 
 import 'layout/app_layout.dart';
 import 'pages/home.dart';
@@ -11,10 +15,16 @@ import 'sections/booking.dart';
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
+    // Root redirects to /home
     GoRoute(
       path: '/',
+      redirect: (_, __) => '/home',
+    ),
+
+    GoRoute(
+      path: '/home',
       builder: (context, state) => AppLayout(
-        currentRoute: '/',
+        currentRoute: '/home',
         child: const HomePage(),
       ),
     ),
@@ -22,7 +32,7 @@ final GoRouter appRouter = GoRouter(
       path: '/about',
       builder: (context, state) => AppLayout(
         currentRoute: '/about',
-        child: const AboutPage(),
+        child: const AboutUsPage(),
       ),
     ),
     GoRoute(
