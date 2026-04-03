@@ -16,7 +16,7 @@
 /*
   // ── Imports add karo file ke top mein ──
   import '../services/firestore_service.dart';
-  import '../services/email_service.dart';
+  import '../services/notification_service.dart';
   import '../models/booking_model.dart';
 */
 
@@ -51,7 +51,7 @@
       await FirestoreService.instance.saveBooking(booking);
 
       // 2. Doctor ko email bhejo (fail hone pe bhi booking save rahegi)
-      await EmailService.instance.sendBookingNotification(booking);
+      await NotificationService.instance.notifyBooking(booking);
 
       // 3. Success step dikhao
       if (mounted) {
@@ -110,7 +110,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/header.dart';
 import '../services/firestore_service.dart';
-import '../services/email_service.dart';
+import '../services/notification_service.dart';
 import '../models/booking_model.dart';
 
 // ── Palette ───────────────────────────────────────────────────────
@@ -246,7 +246,7 @@ class _BookingPageState extends State<BookingPage>
       await FirestoreService.instance.saveBooking(booking);
 
       // 2. Doctor ko email bhejo
-      await EmailService.instance.sendBookingNotification(booking);
+      await NotificationService.instance.notifyBooking(booking);
 
       // 3. Confirmation screen
       if (mounted) {

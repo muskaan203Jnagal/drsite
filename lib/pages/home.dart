@@ -683,7 +683,7 @@ class _AboutSection extends StatelessWidget {
         const SizedBox(height: 18),
         Text(
           "Dr. Ravinder's Clinic is Kartarpur's trusted destination for comprehensive dental and dermatology care. "
-          "With over a decade of experience, we combine world-class medical expertise with genuine compassion — "
+          "We combine world-class medical expertise with genuine compassion — "
           "because every patient deserves to look and feel their absolute best.",
           style: GoogleFonts.nunito(color: _kBody, fontSize: 15, height: 1.75),
         ),
@@ -692,8 +692,8 @@ class _AboutSection extends StatelessWidget {
           spacing: 12,
           runSpacing: 12,
           children: [
-            _featureChip(Icons.verified_rounded, "10+ Years Experience"),
-            _featureChip(Icons.people_rounded, "5000+ Happy Patients"),
+            _featureChip(Icons.verified_rounded, "BDS + MDS Qualified"),
+            _featureChip(Icons.people_rounded, "Patients Come First"),
             _featureChip(Icons.local_hospital_rounded, "Dual Speciality"),
           ],
         ),
@@ -765,11 +765,11 @@ class _AboutSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _statRow("67+", "Qualified Doctors &\nSpecialists on Call"),
+          _statRow("BDS · MDS", "Dual Qualified\nDental & Skin Expert"),
           Divider(color: Colors.white.withOpacity(0.08), height: 32),
-          _statRow("99%", "Patient Satisfaction\nRate"),
+          _statRow("100%", "Personal Doctor\nEvery Visit"),
           Divider(color: Colors.white.withOpacity(0.08), height: 32),
-          _statRow("5000+", "Patients Treated\nSuccessfully"),
+          _statRow("Kartarpur", "Serving Our\nLocal Community"),
         ],
       ),
     );

@@ -12,7 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/header.dart';
 import '../services/firestore_service.dart';
-import '../services/email_service.dart';
+import '../services/notification_service.dart';
 import '../models/contact_model.dart';
 
 const Color kTeal = Color(0xFF0D9E8C);
@@ -107,7 +107,7 @@ class _ContactPageState extends State<ContactPage>
         await FirestoreService.instance.saveContact(contact);
 
         // 2. Doctor ko email bhejo
-        await EmailService.instance.sendContactNotification(contact);
+        await NotificationService.instance.notifyContact(contact);
 
         // 3. Success state
         if (mounted) {

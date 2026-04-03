@@ -167,12 +167,14 @@ class AppFooter extends StatelessWidget {
         const SizedBox(height: 24),
         Row(
           children: [
-            _socialIcon(Icons.camera_alt_outlined, "https://instagram.com/"),
+            _socialIcon(Icons.camera_alt_outlined,
+                "https://www.instagram.com/drravinderclinics/"),
             const SizedBox(width: 10),
-            _socialIcon(Icons.facebook_outlined, "https://facebook.com/"),
+            _socialIcon(Icons.facebook_outlined,
+                "https://www.facebook.com/drravinderclinics/"),
             const SizedBox(width: 10),
-            _socialIcon(
-                Icons.play_circle_outline_rounded, "https://youtube.com/"),
+            _socialIcon(Icons.play_circle_outline_rounded,
+                "https://www.youtube.com/channel/UCbMNBxvRCGWOv2c739S9uqg"),
           ],
         ),
       ],
@@ -218,7 +220,8 @@ class AppFooter extends StatelessWidget {
         const SizedBox(height: 20),
         _touchRow(
           icon: Icons.location_on_rounded,
-          text: "Kartarpur, Jalandhar,\nPunjab, India 144801",
+          text:
+              "Opp. Vaishno Devi Mandir,\nGangsar Bazar, Kartarpur,\nPunjab 144001",
         ),
         const SizedBox(height: 16),
         GestureDetector(

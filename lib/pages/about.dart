@@ -1,10 +1,18 @@
+// ================================================================
+//  pages/about.dart  —  Dr. Ravinder's Clinic • About Page
+//  PREMIUM: Video Hero · Parallax Scroll · 3D Tilt Cards
+//           Scroll Progress Bar · Cinematic Entrances
+// ================================================================
+
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/header.dart';
+
 
 // ── Palette ───────────────────────────────────────────────────────
 const _kDark = Color(0xFF0A2E2A);
+const _kDeep = Color(0xFF071E1B);
 const _kTealLight = Color(0xFF5EEAD4);
 const _kTeal = Color(0xFF0D9E8C);
 const _kHeading = Color(0xFF0A2E2A);
@@ -14,61 +22,160 @@ const _kSlate = Color(0xFFE6FAF7);
 const _kIvory = Color(0xFFF0FDFA);
 
 // ═══════════════════════════════════════════════════════════════════
-//  PAGE ROOT — AppLayout handles Scaffold + scroll
+//  PAGE ROOT
 // ═══════════════════════════════════════════════════════════════════
-class AboutUsPage extends StatelessWidget {
+class AboutUsPage extends StatefulWidget {
   const AboutUsPage({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        _AboutHeroSection(),
-        _MissionSection(),
-        _DoctorProfileSection(),
-        _StatsSection(),
-        _ValuesSection(),
-        _WhyUsSection(),
-        _TestimonialsSection(),
-      ],
-    );
-  }
+  State<AboutUsPage> createState() => _AboutUsPageState();
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  1 · HERO
-// ═══════════════════════════════════════════════════════════════════
-class _AboutHeroSection extends StatefulWidget {
-  const _AboutHeroSection();
-  @override
-  State<_AboutHeroSection> createState() => _AboutHeroSectionState();
-}
-
-class _AboutHeroSectionState extends State<_AboutHeroSection>
-    with TickerProviderStateMixin {
-  late final AnimationController _bgCtrl, _textCtrl;
-  late final Animation<double> _bgScale, _fade;
-  late final Animation<Offset> _slide;
+class _AboutUsPageState extends State<AboutUsPage> {
+  final ScrollController _scrollCtrl = ScrollController();
+  double _scrollProgress = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _bgCtrl =
-        AnimationController(vsync: this, duration: const Duration(seconds: 12))
-          ..repeat(reverse: true);
-    _bgScale = Tween<double>(begin: 1.0, end: 1.1)
-        .animate(CurvedAnimation(parent: _bgCtrl, curve: Curves.easeInOut));
-    _textCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1200))
-      ..forward();
-    _fade = CurvedAnimation(parent: _textCtrl, curve: Curves.easeOut);
-    _slide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
-        .animate(
-            CurvedAnimation(parent: _textCtrl, curve: Curves.easeOutCubic));
+    _scrollCtrl.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollCtrl.hasClients) return;
+    final max = _scrollCtrl.position.maxScrollExtent;
+    if (max == 0) return;
+    setState(() => _scrollProgress = _scrollCtrl.offset / max);
   }
 
   @override
   void dispose() {
+    _scrollCtrl.removeListener(_onScroll);
+    _scrollCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      SingleChildScrollView(
+        controller: _scrollCtrl,
+        child: Column(children: [
+          _VideoHeroSection(scrollCtrl: _scrollCtrl),
+          _MissionSection(),
+          _DoctorProfileSection(),
+          _StatsSection(),
+          _TestimonialsSection(),
+        ]),
+      ),
+      Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        child: _ScrollProgressBar(progress: _scrollProgress),
+      ),
+    ]);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCROLL PROGRESS BAR
+// ═══════════════════════════════════════════════════════════════════
+class _ScrollProgressBar extends StatelessWidget {
+  final double progress;
+  const _ScrollProgressBar({required this.progress});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final filled = constraints.maxWidth * progress.clamp(0.0, 1.0);
+      return Stack(children: [
+        Container(height: 3, color: _kTeal.withOpacity(0.15)),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 60),
+          height: 3,
+          width: filled,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(colors: [_kTeal, _kTealLight]),
+          ),
+        ),
+        if (progress > 0.01)
+          Positioned(
+            left: filled - 6,
+            top: -3,
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: _kTealLight,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: _kTealLight.withOpacity(0.8),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  )
+                ],
+              ),
+            ),
+          ),
+      ]);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  1 · VIDEO HERO with Parallax
+// ═══════════════════════════════════════════════════════════════════
+class _VideoHeroSection extends StatefulWidget {
+  final ScrollController scrollCtrl;
+  const _VideoHeroSection({required this.scrollCtrl});
+  @override
+  State<_VideoHeroSection> createState() => _VideoHeroSectionState();
+}
+
+class _VideoHeroSectionState extends State<_VideoHeroSection>
+    with TickerProviderStateMixin {
+  late final AnimationController _textCtrl;
+  late final AnimationController _bgCtrl;
+  late final Animation<double> _badgeFade, _titleFade, _subFade;
+  late final Animation<Offset> _titleSlide, _badgeSlide;
+  double _scrollOffset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollCtrl.addListener(_onScroll);
+
+    _bgCtrl = AnimationController(
+        vsync: this, duration: const Duration(seconds: 12))
+      ..repeat();
+
+    _textCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1400))
+      ..forward();
+    _badgeFade = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(parent: _textCtrl, curve: const Interval(0.0, 0.35)));
+    _badgeSlide = Tween<Offset>(begin: const Offset(0, 0.6), end: Offset.zero)
+        .animate(CurvedAnimation(
+            parent: _textCtrl,
+            curve: const Interval(0.0, 0.35, curve: Curves.easeOut)));
+    _titleFade = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(parent: _textCtrl, curve: const Interval(0.2, 0.6)));
+    _titleSlide = Tween<Offset>(begin: const Offset(0, 0.35), end: Offset.zero)
+        .animate(CurvedAnimation(
+            parent: _textCtrl,
+            curve: const Interval(0.2, 0.6, curve: Curves.easeOutCubic)));
+    _subFade = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(parent: _textCtrl, curve: const Interval(0.5, 0.9)));
+  }
+
+  void _onScroll() {
+    if (mounted) setState(() => _scrollOffset = widget.scrollCtrl.offset);
+  }
+
+  @override
+  void dispose() {
+    widget.scrollCtrl.removeListener(_onScroll);
     _bgCtrl.dispose();
     _textCtrl.dispose();
     super.dispose();
@@ -77,90 +184,450 @@ class _AboutHeroSectionState extends State<_AboutHeroSection>
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
+    final heroH = isMobile ? 600.0 : 700.0;
+
     return SizedBox(
-      height: isMobile ? 540 : 620,
+      height: heroH,
       child: Stack(fit: StackFit.expand, children: [
-        AnimatedBuilder(
-          animation: _bgScale,
-          builder: (_, child) =>
-              Transform.scale(scale: _bgScale.value, child: child),
-          child: Image.asset('assets/images/home_image.jpeg',
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(color: _kDark)),
-        ),
-        Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-          colors: [
-            _kDark.withOpacity(0.88),
-            _kDark.withOpacity(0.55),
-            Colors.transparent
-          ],
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-        ))),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: ClipPath(
-            clipper: _DiagClipper(),
-            child: Container(height: 100, color: _kTealLight.withOpacity(0.15)),
+        // ── 3D Animated Background with parallax ────────────────
+          Positioned(
+            top: -_scrollOffset * 0.4,
+            left: 0,
+            right: 0,
+            height: heroH + 200,
+            child: AnimatedBuilder(
+              animation: _bgCtrl,
+              builder: (_, __) => CustomPaint(
+                painter: _HeroBgPainter(_bgCtrl.value),
+              ),
+            ),
           ),
-        ),
-        Center(
-            child: FadeTransition(
-                opacity: _fade,
-                child: SlideTransition(
-                  position: _slide,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      const SizedBox(height: 36),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: _kTealLight.withOpacity(0.18),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                              color: _kTealLight.withOpacity(0.5), width: 1.2),
-                        ),
-                        child: Text('ABOUT US',
+
+          // Dark gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  _kDeep.withOpacity(0.92),
+                  _kDark.withOpacity(0.70),
+                  _kDark.withOpacity(0.25),
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),
+            ),
+          ),
+
+          // Teal left vignette
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [_kTeal.withOpacity(0.18), Colors.transparent],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+          ),
+
+          // Grid texture
+          CustomPaint(painter: _GridPainter()),
+
+          // Diagonal accent
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipPath(
+              clipper: _DiagClipper(),
+              child:
+                  Container(height: 120, color: _kTealLight.withOpacity(0.08)),
+            ),
+          ),
+
+          // Decorative circles
+          Positioned(
+              top: -80,
+              right: -80,
+              child: Container(
+                  width: 340,
+                  height: 340,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border:
+                        Border.all(color: _kTeal.withOpacity(0.12), width: 1.5),
+                  ))),
+          Positioned(
+              top: 40,
+              right: 40,
+              child: Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        color: _kTealLight.withOpacity(0.07), width: 1),
+                  ))),
+
+          // Text
+          Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 80),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                FadeTransition(
+                  opacity: _badgeFade,
+                  child: SlideTransition(
+                    position: _badgeSlide,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 22, vertical: 9),
+                      decoration: BoxDecoration(
+                        color: _kTealLight.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                            color: _kTealLight.withOpacity(0.45), width: 1.2),
+                      ),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                                color: _kTealLight, shape: BoxShape.circle)),
+                        const SizedBox(width: 8),
+                        Text('ABOUT US',
                             style: GoogleFonts.nunito(
                                 color: _kTealLight,
-                                fontSize: 12,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: 3)),
-                      ),
-                      const SizedBox(height: 22),
-                      Text('Healing Smiles,\nGlowing Skin.',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.playfairDisplay(
-                              color: Colors.white,
-                              fontSize: isMobile ? 38 : 56,
-                              fontWeight: FontWeight.w700,
-                              height: 1.15)),
-                      const SizedBox(height: 18),
-                      Text(
-                          'Your trusted destination for dental\n& skin care in Kartarpur, Punjab.',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.nunito(
-                              color: Colors.white70,
-                              fontSize: isMobile ? 14 : 17,
-                              height: 1.6)),
-                    ]),
+                                letterSpacing: 3.5)),
+                      ]),
+                    ),
                   ),
-                ))),
+                ),
+                const SizedBox(height: 28),
+                FadeTransition(
+                  opacity: _titleFade,
+                  child: SlideTransition(
+                    position: _titleSlide,
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: 'Expert Care,\n',
+                            style: GoogleFonts.playfairDisplay(
+                                color: Colors.white,
+                                fontSize: isMobile ? 40 : 62,
+                                fontWeight: FontWeight.w700,
+                                height: 1.12)),
+                        TextSpan(
+                            text: 'Personalised for You.',
+                            style: GoogleFonts.playfairDisplay(
+                                color: _kTealLight,
+                                fontSize: isMobile ? 40 : 62,
+                                fontWeight: FontWeight.w700,
+                                fontStyle: FontStyle.italic,
+                                height: 1.12)),
+                      ]),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 22),
+                FadeTransition(
+                  opacity: _subFade,
+                  child: Column(children: [
+                    Text("Dr. Ravinder's Dental & Skin Aesthetic Clinic",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.nunito(
+                            color: Colors.white70,
+                            fontSize: isMobile ? 14 : 17,
+                            height: 1.6,
+                            fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    Text('Kartarpur, Punjab',
+                        style: GoogleFonts.nunito(
+                            color: _kTealLight.withOpacity(0.7),
+                            fontSize: isMobile ? 12 : 14,
+                            letterSpacing: 1.2)),
+                  ]),
+                ),
+                const SizedBox(height: 40),
+                FadeTransition(
+                  opacity: _subFade,
+                  child: Column(children: [
+                    Text('scroll',
+                        style: GoogleFonts.nunito(
+                            color: Colors.white30,
+                            fontSize: 10,
+                            letterSpacing: 2)),
+                    const SizedBox(height: 6),
+                    _ScrollCue(),
+                  ]),
+                ),
+              ]),
+            ),
+          ),
       ]),
     );
   }
 }
 
+class _ScrollCue extends StatefulWidget {
+  @override
+  State<_ScrollCue> createState() => _ScrollCueState();
+}
+
+class _ScrollCueState extends State<_ScrollCue>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c;
+  late final Animation<double> _bounce;
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
+    _bounce = Tween<double>(begin: 0, end: 8)
+        .animate(CurvedAnimation(parent: _c, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: _bounce,
+        builder: (_, __) => Transform.translate(
+            offset: Offset(0, _bounce.value),
+            child: Icon(Icons.keyboard_arrow_down_rounded,
+                color: Colors.white30, size: 22)),
+      );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  3D ANIMATED HERO BACKGROUND PAINTER
+// ═══════════════════════════════════════════════════════════════════
+class _HeroBgPainter extends CustomPainter {
+  final double t; // 0..1 looping
+  _HeroBgPainter(this.t);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // ── Base deep gradient ─────────────────────────────────────────
+    final bgPaint = Paint()
+      ..shader = LinearGradient(
+        colors: const [
+          Color(0xFF020F1A),
+          Color(0xFF041628),
+          Color(0xFF061E30),
+          Color(0xFF0A2540),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
+
+    // ── Animated aurora sweeps ─────────────────────────────────────
+    final a1 = math.sin(t * math.pi * 2) * 0.5 + 0.5;
+    final a2 = math.cos(t * math.pi * 2 + 1.2) * 0.5 + 0.5;
+
+    _drawAurora(canvas, size,
+        center: Offset(w * (0.15 + a1 * 0.25), h * 0.3),
+        radius: w * 0.55,
+        color: const Color(0xFF0D9E8C),
+        opacity: 0.13 + a1 * 0.07);
+    _drawAurora(canvas, size,
+        center: Offset(w * (0.75 - a2 * 0.2), h * 0.6),
+        radius: w * 0.45,
+        color: const Color(0xFF0A5570),
+        opacity: 0.10 + a2 * 0.06);
+    _drawAurora(canvas, size,
+        center: Offset(w * 0.5, h * (0.1 + a1 * 0.15)),
+        radius: w * 0.38,
+        color: const Color(0xFF5EEAD4),
+        opacity: 0.06 + a2 * 0.04);
+
+    // ── Perspective grid ───────────────────────────────────────────
+    _drawGrid(canvas, size, t);
+
+    // ── 3D Floating orbs ──────────────────────────────────────────
+    _draw3DOrb(canvas,
+        center: Offset(w * 0.78 + math.cos(t * math.pi * 2) * 28,
+            h * 0.22 + math.sin(t * math.pi * 2) * 18),
+        radius: 90,
+        baseColor: const Color(0xFF0D9E8C),
+        depth: 1.0);
+    _draw3DOrb(canvas,
+        center: Offset(w * 0.12 + math.sin(t * math.pi * 2 + 0.8) * 22,
+            h * 0.72 + math.cos(t * math.pi * 2 + 0.8) * 14),
+        radius: 65,
+        baseColor: const Color(0xFF0A5570),
+        depth: 0.7);
+    _draw3DOrb(canvas,
+        center: Offset(w * 0.88 + math.sin(t * math.pi * 2 + 2.0) * 16,
+            h * 0.65 + math.cos(t * math.pi * 2 + 2.0) * 20),
+        radius: 48,
+        baseColor: const Color(0xFF5EEAD4),
+        depth: 0.5);
+    _draw3DOrb(canvas,
+        center: Offset(w * 0.05 + math.cos(t * math.pi * 2 + 3.5) * 12,
+            h * 0.18 + math.sin(t * math.pi * 2 + 3.5) * 18),
+        radius: 36,
+        baseColor: const Color(0xFF0D9E8C),
+        depth: 0.4);
+
+    // ── Floating particles ─────────────────────────────────────────
+    for (int i = 0; i < 28; i++) {
+      final seed = i * 137.508;
+      final px = w * ((seed * 0.3141) % 1.0);
+      final baseY = h * ((seed * 0.7182) % 1.0);
+      final floatY = (baseY - (t * h * 0.3 + seed * 0.5) % h);
+      final phase = (t + i / 28.0) % 1.0;
+      final opacity = (math.sin(phase * math.pi) * 0.6 + 0.1).clamp(0.0, 0.7);
+      final radius = 1.2 + (i % 3) * 1.2;
+      final pColor = i % 3 == 0
+          ? const Color(0xFF5EEAD4)
+          : i % 3 == 1
+              ? const Color(0xFF0D9E8C)
+              : Colors.white;
+      canvas.drawCircle(Offset(px, floatY), radius,
+          Paint()..color = pColor.withOpacity(opacity));
+      if (i % 3 == 0) {
+        canvas.drawCircle(
+            Offset(px, floatY),
+            radius * 2.5,
+            Paint()
+              ..color = const Color(0xFF5EEAD4).withOpacity(opacity * 0.25)
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
+      }
+    }
+
+    // ── Bottom vignette ────────────────────────────────────────────
+    canvas.drawRect(
+        Rect.fromLTWH(0, h * 0.35, w, h * 0.65),
+        Paint()
+          ..shader = LinearGradient(
+            colors: [
+              Colors.transparent,
+              const Color(0xFF020F1A).withOpacity(0.65),
+              const Color(0xFF020F1A),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ).createShader(Rect.fromLTWH(0, h * 0.35, w, h * 0.65)));
+  }
+
+  void _drawAurora(Canvas canvas, Size size,
+      {required Offset center,
+      required double radius,
+      required Color color,
+      required double opacity}) {
+    canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..color = color.withOpacity(opacity)
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.7));
+  }
+
+  void _draw3DOrb(Canvas canvas,
+      {required Offset center,
+      required double radius,
+      required Color baseColor,
+      required double depth}) {
+    // Outer glow
+    canvas.drawCircle(
+        center,
+        radius * 1.6,
+        Paint()
+          ..color = baseColor.withOpacity(0.06 * depth)
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.8));
+    // Sphere body
+    canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..shader = RadialGradient(
+            center: const Alignment(-0.35, -0.4),
+            radius: 0.9,
+            colors: [
+              Color.lerp(Colors.white, baseColor, 0.3)!
+                  .withOpacity(0.35 * depth),
+              baseColor.withOpacity(0.20 * depth),
+              baseColor.withOpacity(0.04 * depth),
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ).createShader(Rect.fromCircle(center: center, radius: radius)));
+    // Specular highlight
+    canvas.drawCircle(
+        Offset(center.dx - radius * 0.28, center.dy - radius * 0.32),
+        radius * 0.22,
+        Paint()
+          ..color = Colors.white.withOpacity(0.18 * depth)
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.15));
+    // Ring
+    canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..color = baseColor.withOpacity(0.22 * depth)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0);
+  }
+
+  void _drawGrid(Canvas canvas, Size size, double t) {
+    final paint = Paint()
+      ..color = const Color(0xFF0D9E8C).withOpacity(0.045)
+      ..strokeWidth = 0.8;
+    const cols = 12;
+    const rows = 8;
+    final vanishX = size.width * 0.5;
+    final vanishY = size.height * 0.42;
+    final shift = (t * size.width / cols) % (size.width / cols);
+    for (int i = -1; i <= cols + 1; i++) {
+      final x = i * (size.width / cols) + shift;
+      canvas.drawLine(Offset(x, 0), Offset(vanishX, vanishY), paint);
+    }
+    for (int j = 0; j <= rows; j++) {
+      final p = j / rows;
+      final y = vanishY + (size.height - vanishY) * p;
+      final xL = (vanishX - vanishX * p * 1.4).clamp(0.0, size.width);
+      final xR =
+          (vanishX + (size.width - vanishX) * p * 1.4).clamp(0.0, size.width);
+      canvas.drawLine(Offset(xL, y), Offset(xR, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_HeroBgPainter old) => old.t != t;
+}
+
+class _GridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.025)
+      ..strokeWidth = 0.8;
+    for (double x = 0; x < size.width; x += 60) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y < size.height; y += 60) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
 class _DiagClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size s) => Path()
-    ..moveTo(0, s.height * 0.6)
+    ..moveTo(0, s.height * 0.55)
     ..lineTo(s.width, 0)
     ..lineTo(s.width, s.height)
     ..lineTo(0, s.height)
@@ -177,20 +644,21 @@ class _MissionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
-    return _FadeSlideIn(
-        child: Container(
-      width: double.infinity,
-      padding:
-          EdgeInsets.symmetric(vertical: 72, horizontal: isMobile ? 24 : 80),
-      color: Colors.white,
-      child: isMobile
-          ? _MissionContent(isMobile: true)
-          : Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(child: _MissionContent(isMobile: false)),
-              const SizedBox(width: 60),
-              Expanded(child: _MissionImageCard()),
-            ]),
-    ));
+    return _RevealOnScroll(
+      child: Container(
+        width: double.infinity,
+        padding:
+            EdgeInsets.symmetric(vertical: 80, horizontal: isMobile ? 24 : 80),
+        color: Colors.white,
+        child: isMobile
+            ? _MissionContent(isMobile: true)
+            : Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(child: _MissionContent(isMobile: false)),
+                const SizedBox(width: 60),
+                Expanded(child: _MissionImageCard()),
+              ]),
+      ),
+    );
   }
 }
 
@@ -201,31 +669,30 @@ class _MissionContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const _SectionBadge(label: 'OUR MISSION'),
-      const SizedBox(height: 20),
+      const SizedBox(height: 22),
       RichText(
           text: TextSpan(children: [
         TextSpan(
             text: 'Excellence in\n',
             style: GoogleFonts.playfairDisplay(
                 color: _kHeading,
-                fontSize: isMobile ? 30 : 42,
+                fontSize: isMobile ? 32 : 46,
                 fontWeight: FontWeight.w700,
-                height: 1.2)),
+                height: 1.15)),
         TextSpan(
             text: 'Every Treatment',
             style: GoogleFonts.playfairDisplay(
                 color: _kTeal,
-                fontSize: isMobile ? 30 : 42,
+                fontSize: isMobile ? 32 : 46,
                 fontWeight: FontWeight.w700,
                 fontStyle: FontStyle.italic,
-                height: 1.2)),
+                height: 1.15)),
       ])),
-      const SizedBox(height: 20),
+      const SizedBox(height: 22),
       Text(
-        "At Glowora Clinic, we believe every patient deserves personalised, world-class care in a comfortable and welcoming environment. Dr. Ravinder combines the latest dental and dermatology techniques with a gentle, patient-first approach — because your comfort and confidence matter to us.",
-        style: GoogleFonts.nunito(
-            color: _kLight, fontSize: isMobile ? 14 : 16, height: 1.75),
-      ),
+          "At Dr. Ravinder's Clinic, we believe every patient deserves personalised, world-class care in a comfortable and welcoming environment. Dr. Ravinder combines the latest dental and dermatology techniques with a gentle, patient-first approach — because your comfort and confidence matter to us.",
+          style: GoogleFonts.nunito(
+              color: _kLight, fontSize: isMobile ? 14 : 16, height: 1.8)),
       const SizedBox(height: 32),
       Wrap(spacing: 14, runSpacing: 14, children: const [
         _HighlightChip(label: '✦  Modern Equipment'),
@@ -233,7 +700,7 @@ class _MissionContent extends StatelessWidget {
         _HighlightChip(label: '✦  Personalised Care Plans'),
         _HighlightChip(label: '✦  Hygienic & Safe'),
       ]),
-      if (isMobile) ...[const SizedBox(height: 36), const _MissionImageCard()],
+      if (isMobile) ...[const SizedBox(height: 40), _MissionImageCard()],
     ]);
   }
 }
@@ -245,38 +712,63 @@ class _MissionImageCard extends StatelessWidget {
     return Stack(clipBehavior: Clip.none, children: [
       ClipRRect(
         borderRadius: BorderRadius.circular(24),
-        child: Image.asset('assets/images/doc_image.jpeg',
-            height: 360,
+        child: Stack(children: [
+          Image.asset(
+            'assets/images/clinic_team.jpg',
+            height: 420,
             width: double.infinity,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(
-                height: 360,
-                color: _kTealLight.withOpacity(0.15),
-                child: Icon(Icons.local_hospital, size: 80, color: _kTeal))),
-      ),
-      Positioned(
-        bottom: -20,
-        left: 20,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          decoration: BoxDecoration(
-            color: _kDark,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                  color: _kDark.withOpacity(0.35),
-                  blurRadius: 22,
-                  offset: const Offset(0, 8))
-            ],
+                height: 420,
+                decoration: BoxDecoration(
+                    color: _kTealLight.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(24)),
+                child: Icon(Icons.local_hospital, size: 80, color: _kTeal)),
           ),
+          // Subtle teal gradient overlay at bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 160,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    _kDark.withOpacity(0.72),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+          ),
+        ]),
+      ),
+      // Trust badge overlay on image
+      Positioned(
+        bottom: 22,
+        left: 24,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          decoration: BoxDecoration(
+              color: _kTeal,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                    color: _kTeal.withOpacity(0.45),
+                    blurRadius: 22,
+                    offset: const Offset(0, 8))
+              ]),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.verified, color: _kTealLight, size: 22),
-            const SizedBox(width: 10),
+            const Icon(Icons.verified_rounded, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
             Text('Trusted by Our Patients',
                 style: GoogleFonts.nunito(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
-                    fontSize: 14)),
+                    fontSize: 13)),
           ]),
         ),
       ),
@@ -285,37 +777,36 @@ class _MissionImageCard extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  3 · DOCTOR PROFILE — Dr. Ravinder, solo practitioner
+//  3 · DOCTOR PROFILE
 // ═══════════════════════════════════════════════════════════════════
 class _DoctorProfileSection extends StatelessWidget {
   const _DoctorProfileSection();
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
-    return _FadeSlideIn(
-      delay: const Duration(milliseconds: 150),
+    return _RevealOnScroll(
+      direction: _RevealDirection.right,
       child: Container(
         width: double.infinity,
         padding:
-            EdgeInsets.symmetric(vertical: 80, horizontal: isMobile ? 24 : 80),
-        decoration: BoxDecoration(
+            EdgeInsets.symmetric(vertical: 90, horizontal: isMobile ? 24 : 80),
+        decoration: const BoxDecoration(
             gradient: LinearGradient(
-          colors: [_kDark, const Color(0xFF0D3B34)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        )),
+                colors: [_kDark, Color(0xFF0D3B34), Color(0xFF0A4A3A)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight)),
         child: isMobile
-            ? const Column(children: [
+            ? Column(children: const [
                 _FloatingDoctorAvatar(),
-                SizedBox(height: 36),
-                _DoctorBio(isMobile: true),
+                SizedBox(height: 40),
+                _DoctorBio(isMobile: true)
               ])
-            : const Row(
+            : Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                children: const [
                     _FloatingDoctorAvatar(),
-                    SizedBox(width: 64),
-                    Expanded(child: _DoctorBio(isMobile: false)),
+                    SizedBox(width: 72),
+                    Expanded(child: _DoctorBio(isMobile: false))
                   ]),
       ),
     );
@@ -330,99 +821,113 @@ class _FloatingDoctorAvatar extends StatefulWidget {
 
 class _FloatingDoctorAvatarState extends State<_FloatingDoctorAvatar>
     with TickerProviderStateMixin {
-  late final AnimationController _floatCtrl, _glowCtrl;
-  late final Animation<double> _float, _glow;
+  late final AnimationController _floatCtrl, _glowCtrl, _rotCtrl;
+  late final Animation<double> _float, _glow, _rot;
+
   @override
   void initState() {
     super.initState();
     _floatCtrl =
-        AnimationController(vsync: this, duration: const Duration(seconds: 3))
+        AnimationController(vsync: this, duration: const Duration(seconds: 4))
           ..repeat(reverse: true);
-    _float = Tween<double>(begin: -8, end: 8)
+    _float = Tween<double>(begin: -10, end: 10)
         .animate(CurvedAnimation(parent: _floatCtrl, curve: Curves.easeInOut));
     _glowCtrl =
         AnimationController(vsync: this, duration: const Duration(seconds: 2))
           ..repeat(reverse: true);
-    _glow = Tween<double>(begin: 0.4, end: 1.0)
+    _glow = Tween<double>(begin: 0.3, end: 1.0)
         .animate(CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut));
+    _rotCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 20))
+          ..repeat();
+    _rot = Tween<double>(begin: 0, end: math.pi * 2)
+        .animate(CurvedAnimation(parent: _rotCtrl, curve: Curves.linear));
   }
 
   @override
   void dispose() {
     _floatCtrl.dispose();
     _glowCtrl.dispose();
+    _rotCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_float, _glow]),
+      animation: Listenable.merge([_float, _glow, _rot]),
       builder: (_, __) => Transform.translate(
         offset: Offset(0, _float.value),
         child: SizedBox(
-            width: 240,
-            height: 280,
+            width: 260,
+            height: 300,
             child: Stack(alignment: Alignment.center, children: [
-              Container(
-                  width: 235,
-                  height: 270,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(120),
-                    border: Border.all(
-                        color: _kTealLight.withOpacity(0.25 * _glow.value),
-                        width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                          color: _kTealLight.withOpacity(0.18 * _glow.value),
-                          blurRadius: 40,
-                          spreadRadius: 4)
-                    ],
-                  )),
-              Container(
-                  width: 218,
-                  height: 252,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(110),
-                    border:
-                        Border.all(color: _kTeal.withOpacity(0.4), width: 1.5),
-                  )),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Image.asset('assets/images/aboutpic.jpg',
-                    width: 200,
-                    height: 240,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                        width: 200,
-                        height: 240,
-                        color: _kTealLight.withOpacity(0.15),
-                        child:
-                            Icon(Icons.person, size: 90, color: _kTealLight))),
-              ),
-              Positioned(
-                  bottom: 8,
-                  right: 0,
+              Transform.rotate(
+                  angle: _rot.value,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: _kTeal,
-                      borderRadius: BorderRadius.circular(20),
+                      width: 255,
+                      height: 290,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(130),
+                          border: Border.all(
+                              color:
+                                  _kTealLight.withOpacity(0.12 * _glow.value),
+                              width: 1.5)))),
+              Container(
+                  width: 242,
+                  height: 278,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(122),
+                      border: Border.all(
+                          color: _kTealLight.withOpacity(0.28 * _glow.value),
+                          width: 2),
                       boxShadow: [
                         BoxShadow(
-                            color: _kTeal.withOpacity(0.4),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4))
-                      ],
-                    ),
-                    child: Text("BDS · MDS",
-                        style: GoogleFonts.nunito(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5)),
-                  )),
+                            color: _kTealLight.withOpacity(0.20 * _glow.value),
+                            blurRadius: 48,
+                            spreadRadius: 6)
+                      ])),
+              Container(
+                  width: 226,
+                  height: 260,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(114),
+                      border: Border.all(
+                          color: _kTeal.withOpacity(0.45), width: 1.5))),
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(106),
+                  child: Image.asset('assets/images/aboutpic.jpg',
+                      width: 208,
+                      height: 248,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                          width: 208,
+                          height: 248,
+                          color: _kTealLight.withOpacity(0.15),
+                          child: Icon(Icons.person,
+                              size: 100, color: _kTealLight)))),
+              Positioned(
+                  bottom: 6,
+                  right: 0,
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 9),
+                      decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                              colors: [_kTeal, Color(0xFF0A7A6A)]),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                                color: _kTeal.withOpacity(0.5),
+                                blurRadius: 18,
+                                offset: const Offset(0, 4))
+                          ]),
+                      child: Text('BDS · MDS',
+                          style: GoogleFonts.nunito(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.8)))),
             ])),
       ),
     );
@@ -439,34 +944,37 @@ class _DoctorBio extends StatelessWidget {
           isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         _SectionBadge(label: 'MEET YOUR DOCTOR', light: true),
-        const SizedBox(height: 18),
+        const SizedBox(height: 20),
         Text('Dr. Ravinder',
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
             style: GoogleFonts.playfairDisplay(
                 color: Colors.white,
-                fontSize: isMobile ? 32 : 46,
+                fontSize: isMobile ? 34 : 50,
                 fontWeight: FontWeight.w700)),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Text('BDS, MDS — Dental Surgeon & Aesthetic Dermatologist',
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
             style: GoogleFonts.nunito(
-                color: _kTealLight, fontSize: 14, height: 1.5)),
-        const SizedBox(height: 22),
+                color: _kTealLight,
+                fontSize: 14,
+                height: 1.5,
+                fontWeight: FontWeight.w600)),
+        const SizedBox(height: 24),
         Container(
-            width: 44,
-            height: 2,
+            width: 50,
+            height: 3,
             decoration: BoxDecoration(
-                color: _kTeal, borderRadius: BorderRadius.circular(2))),
-        const SizedBox(height: 22),
+                gradient: const LinearGradient(colors: [_kTeal, _kTealLight]),
+                borderRadius: BorderRadius.circular(2))),
+        const SizedBox(height: 24),
         Text(
-          "Dr. Ravinder is a qualified dental surgeon and aesthetic dermatologist who has recently opened  Dr Ravinder's Dental and Skin Aesthetic Clinic right here in Kartarpur. With professional training in both dentistry and skin care, she brings expert, personalised treatment to every patient — combining clinical precision with a warm, caring approach.\n\nAt Glowora, you're not just a patient — you're a priority. Dr. Ravinder personally handles every consultation and treatment, ensuring the highest standard of care every single visit.",
-          textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          style: GoogleFonts.nunito(
-              color: Colors.white70, fontSize: 15, height: 1.75),
-        ),
-        const SizedBox(height: 30),
+            "Dr. Ravinder is a qualified dental surgeon and aesthetic dermatologist who has recently opened Dr. Ravinder's Dental and Skin Aesthetic Clinic right here in Kartarpur. With professional training in both dentistry and skin care, she brings expert, personalised treatment to every patient — combining clinical precision with a warm, caring approach.\n\nAt this clinic, you're not just a patient — you're a priority. Dr. Ravinder personally handles every consultation and treatment, ensuring the highest standard of care every single visit.",
+            textAlign: isMobile ? TextAlign.center : TextAlign.start,
+            style: GoogleFonts.nunito(
+                color: Colors.white60, fontSize: 15, height: 1.8)),
+        const SizedBox(height: 32),
         Wrap(
-            spacing: 16,
+            spacing: 14,
             runSpacing: 14,
             alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
             children: const [
@@ -489,26 +997,24 @@ class _InfoBubble extends StatelessWidget {
   const _InfoBubble({required this.icon, required this.label});
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.07),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _kTealLight.withOpacity(0.3)),
-        ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, color: _kTealLight, size: 17),
-          const SizedBox(width: 8),
-          Text(label,
-              style: GoogleFonts.nunito(
-                  color: Colors.white70,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600)),
-        ]),
-      );
+          border: Border.all(color: _kTealLight.withOpacity(0.3))),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, color: _kTealLight, size: 16),
+        const SizedBox(width: 9),
+        Text(label,
+            style: GoogleFonts.nunito(
+                color: Colors.white70,
+                fontSize: 13,
+                fontWeight: FontWeight.w600)),
+      ]));
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  4 · STATS — honest numbers for a new clinic
+//  4 · STATS — 3D Tilt Cards
 // ═══════════════════════════════════════════════════════════════════
 class _StatsSection extends StatelessWidget {
   const _StatsSection();
@@ -521,33 +1027,35 @@ class _StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isWide = MediaQuery.of(context).size.width > 700;
-    return _FadeSlideIn(
-        child: Container(
-      width: double.infinity,
-      color: _kSlate,
-      padding: EdgeInsets.symmetric(vertical: 72, horizontal: isWide ? 80 : 24),
-      child: Column(children: [
-        const _SectionBadge(label: 'GLOWORA AT A GLANCE'),
-        const SizedBox(height: 16),
-        Text('Everything We Bring\nTo Your Care',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.playfairDisplay(
-                color: _kHeading,
-                fontSize: isWide ? 40 : 28,
-                fontWeight: FontWeight.w700,
-                height: 1.2)),
-        const SizedBox(height: 8),
-        Text('Newly opened. Fully equipped. Deeply committed.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(color: _kLight, fontSize: 14)),
-        const SizedBox(height: 52),
-        Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: _items.map((d) => _StatCard(item: d)).toList()),
-      ]),
-    ));
+    return _RevealOnScroll(
+      child: Container(
+        width: double.infinity,
+        color: _kSlate,
+        padding:
+            EdgeInsets.symmetric(vertical: 80, horizontal: isWide ? 80 : 24),
+        child: Column(children: [
+          const _SectionBadge(label: 'GLOWORA AT A GLANCE'),
+          const SizedBox(height: 18),
+          Text('Everything We Bring\nTo Your Care',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.playfairDisplay(
+                  color: _kHeading,
+                  fontSize: isWide ? 44 : 30,
+                  fontWeight: FontWeight.w700,
+                  height: 1.2)),
+          const SizedBox(height: 10),
+          Text('Newly opened. Fully equipped. Deeply committed.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(color: _kLight, fontSize: 14)),
+          const SizedBox(height: 56),
+          Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              alignment: WrapAlignment.center,
+              children: _items.map((d) => _Tilt3DStatCard(item: d)).toList()),
+        ]),
+      ),
+    );
   }
 }
 
@@ -557,391 +1065,152 @@ class _StatItem {
   const _StatItem(this.icon, this.value, this.label);
 }
 
-class _StatCard extends StatefulWidget {
+class _Tilt3DStatCard extends StatefulWidget {
   final _StatItem item;
-  const _StatCard({required this.item});
+  const _Tilt3DStatCard({required this.item});
   @override
-  State<_StatCard> createState() => _StatCardState();
+  State<_Tilt3DStatCard> createState() => _Tilt3DStatCardState();
 }
 
-class _StatCardState extends State<_StatCard> {
+class _Tilt3DStatCardState extends State<_Tilt3DStatCard> {
+  Offset _mouse = Offset.zero;
   bool _hovered = false;
+
   @override
   Widget build(BuildContext context) {
+    const cardW = 190.0;
+    const cardH = 220.0;
+    final tiltX = _hovered ? _mouse.dy * 0.18 : 0.0;
+    final tiltY = _hovered ? -_mouse.dx * 0.18 : 0.0;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onExit: (_) {
+        setState(() {
+          _hovered = false;
+          _mouse = Offset.zero;
+        });
+      },
+      onHover: (e) {
+        final x = (e.localPosition.dx / cardW - 0.5) * 2;
+        final y = (e.localPosition.dy / cardH - 0.5) * 2;
+        setState(() => _mouse = Offset(x, y));
+      },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        width: 180,
-        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
-        transform: _hovered
-            ? (Matrix4.identity()..translate(0.0, -8.0))
-            : Matrix4.identity(),
-        decoration: BoxDecoration(
-          color: _hovered ? _kDark : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-                color: _kDark.withOpacity(_hovered ? 0.3 : 0.08),
-                blurRadius: _hovered ? 36 : 16,
-                offset: const Offset(0, 8))
-          ],
-        ),
-        child: Column(children: [
-          Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: _hovered
-                    ? _kTealLight.withOpacity(0.2)
-                    : _kTeal.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(widget.item.icon,
-                  color: _hovered ? _kTealLight : _kTeal, size: 24)),
-          const SizedBox(height: 16),
-          Text(widget.item.value,
-              style: GoogleFonts.playfairDisplay(
-                  color: _hovered ? _kTealLight : _kDark,
-                  fontSize: 34,
-                  fontWeight: FontWeight.w700,
-                  fontStyle: FontStyle.italic)),
-          const SizedBox(height: 8),
-          Text(widget.item.label,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.nunito(
-                  color: _hovered ? Colors.white60 : _kLight,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13)),
-        ]),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  5 · VALUES
-// ═══════════════════════════════════════════════════════════════════
-class _ValuesSection extends StatelessWidget {
-  const _ValuesSection();
-  static const _values = [
-    _ValueData(Icons.favorite_outline, 'Compassion',
-        'Every patient is treated with kindness, respect, and genuine care.'),
-    _ValueData(Icons.science_outlined, 'Innovation',
-        'Modern, evidence-based techniques for the best possible results.'),
-    _ValueData(Icons.workspace_premium_outlined, 'Excellence',
-        'Uncompromising quality in every consultation and procedure.'),
-    _ValueData(Icons.lock_outline, 'Trust',
-        'Transparent advice and ethical practice — always honest with you.'),
-  ];
-  @override
-  Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 700;
-    return Container(
-      width: double.infinity,
-      color: Colors.white,
-      padding:
-          EdgeInsets.symmetric(vertical: 72, horizontal: isMobile ? 24 : 80),
-      child: Column(children: [
-        const _SectionBadge(label: 'OUR VALUES'),
-        const SizedBox(height: 16),
-        Text('What Drives Us Every Day',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.playfairDisplay(
-                color: _kHeading,
-                fontSize: isMobile ? 26 : 40,
-                fontWeight: FontWeight.w700)),
-        const SizedBox(height: 52),
-        Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: List.generate(_values.length,
-                (i) => _HoverValueCard(data: _values[i], index: i))),
-      ]),
-    );
-  }
-}
-
-class _ValueData {
-  final IconData icon;
-  final String title, desc;
-  const _ValueData(this.icon, this.title, this.desc);
-}
-
-class _HoverValueCard extends StatefulWidget {
-  final _ValueData data;
-  final int index;
-  const _HoverValueCard({required this.data, required this.index});
-  @override
-  State<_HoverValueCard> createState() => _HoverValueCardState();
-}
-
-class _HoverValueCardState extends State<_HoverValueCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _fade;
-  late final Animation<Offset> _slide;
-  bool _hovered = false;
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
-    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-    _slide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
-    Future.delayed(Duration(milliseconds: 180 * widget.index), () {
-      if (mounted) _ctrl.forward();
-    });
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
-    final cardW = (w < 700 ? w - 48.0 : (w - 200) / 2).clamp(200.0, 360.0);
-    return FadeTransition(
-        opacity: _fade,
-        child: SlideTransition(
-            position: _slide,
-            child: MouseRegion(
-              onEnter: (_) => setState(() => _hovered = true),
-              onExit: (_) => setState(() => _hovered = false),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 260),
-                width: cardW,
-                padding: const EdgeInsets.all(28),
-                transform: _hovered
-                    ? (Matrix4.identity()..translate(0.0, -8.0))
-                    : Matrix4.identity(),
-                decoration: BoxDecoration(
-                  color: _hovered ? _kDark : _kIvory,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: _hovered ? _kDark : _kTeal.withOpacity(0.2)),
-                  boxShadow: [
-                    BoxShadow(
-                        color: _kDark.withOpacity(_hovered ? 0.28 : 0.06),
-                        blurRadius: _hovered ? 36 : 12,
-                        offset: const Offset(0, 8))
-                  ],
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: _hovered
-                                ? _kTealLight.withOpacity(0.2)
-                                : _kTeal.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Icon(widget.data.icon,
-                              color: _hovered ? _kTealLight : _kTeal,
-                              size: 26)),
-                      const SizedBox(height: 18),
-                      Text(widget.data.title,
-                          style: GoogleFonts.playfairDisplay(
-                              color: _hovered ? Colors.white : _kHeading,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 10),
-                      Text(widget.data.desc,
-                          style: GoogleFonts.nunito(
-                              color: _hovered ? Colors.white60 : _kLight,
-                              fontSize: 14,
-                              height: 1.65)),
-                    ]),
-              ),
-            )));
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  6 · WHY GLOWORA? — replaces team + timeline (new solo clinic)
-// ═══════════════════════════════════════════════════════════════════
-class _WhyUsSection extends StatelessWidget {
-  const _WhyUsSection();
-  static const _points = [
-    _WhyData(Icons.person_pin_circle_rounded, 'One Expert, Complete Care',
-        "Dr. Ravinder personally handles every dental and skin consultation. No handoffs, no strangers — just consistent, expert care every visit."),
-    _WhyData(Icons.medical_information_rounded, 'Latest Equipment',
-        "Dr Ravinder's Dental and Skin Aesthetic Clinic is equipped with modern dental and dermatology tools, ensuring accurate diagnosis and comfortable procedures from day one."),
-    _WhyData(Icons.location_on_rounded, 'Right Here in Kartarpur',
-        "No need to travel to city hospitals. Premium dental and skin care right at home — at fair, transparent prices."),
-    _WhyData(Icons.schedule_rounded, 'Easy Appointments',
-        "Simple online booking, short wait times, and a doctor who actually listens. Your time and comfort are our priority."),
-  ];
-  @override
-  Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 700;
-    return _FadeSlideIn(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.001)
+          ..rotateX(tiltX)
+          ..rotateY(tiltY)
+          ..translate(0.0, _hovered ? -10.0 : 0.0),
         child: Container(
-      width: double.infinity,
-      color: _kSlate,
-      padding:
-          EdgeInsets.symmetric(vertical: 72, horizontal: isMobile ? 24 : 80),
-      child: Column(children: [
-        const _SectionBadge(
-            label: "WHY Dr Ravinder's Dental and Skin Aesthetic Clinic?"),
-        const SizedBox(height: 16),
-        Text('Why Patients\nChoose Us',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.playfairDisplay(
-                color: _kHeading,
-                fontSize: isMobile ? 28 : 42,
-                fontWeight: FontWeight.w700,
-                height: 1.2)),
-        const SizedBox(height: 52),
-        Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: _points.map((p) => _WhyCard(data: p)).toList()),
-      ]),
-    ));
-  }
-}
-
-class _WhyData {
-  final IconData icon;
-  final String title, desc;
-  const _WhyData(this.icon, this.title, this.desc);
-}
-
-class _WhyCard extends StatefulWidget {
-  final _WhyData data;
-  const _WhyCard({required this.data});
-  @override
-  State<_WhyCard> createState() => _WhyCardState();
-}
-
-class _WhyCardState extends State<_WhyCard> {
-  bool _hovered = false;
-  @override
-  Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
-    final cardW = (w < 700 ? w - 48.0 : (w > 1100 ? (w - 240) / 2 : w - 208.0))
-        .clamp(260.0, 480.0);
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        width: cardW,
-        padding: const EdgeInsets.all(28),
-        transform: _hovered
-            ? (Matrix4.identity()..translate(0.0, -6.0))
-            : Matrix4.identity(),
-        decoration: BoxDecoration(
-          color: _hovered ? _kDark : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border:
-              Border.all(color: _hovered ? _kDark : _kTeal.withOpacity(0.2)),
-          boxShadow: [
-            BoxShadow(
-                color: _kDark.withOpacity(_hovered ? 0.25 : 0.06),
-                blurRadius: _hovered ? 32 : 12,
-                offset: const Offset(0, 6))
-          ],
+          width: cardW,
+          padding: const EdgeInsets.symmetric(vertical: 34, horizontal: 22),
+          decoration: BoxDecoration(
+              color: _hovered ? _kDark : Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: [
+                BoxShadow(
+                    color: _kDark.withOpacity(_hovered ? 0.35 : 0.09),
+                    blurRadius: _hovered ? 40 : 18,
+                    offset: const Offset(0, 10)),
+                if (_hovered)
+                  BoxShadow(
+                      color: _kTeal.withOpacity(0.18),
+                      blurRadius: 60,
+                      offset: const Offset(0, 20)),
+              ],
+              border: Border.all(
+                  color:
+                      _hovered ? _kTeal.withOpacity(0.4) : Colors.transparent)),
+          child: Column(children: [
+            Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                    color: _hovered
+                        ? _kTealLight.withOpacity(0.2)
+                        : _kTeal.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16)),
+                child: Icon(widget.item.icon,
+                    color: _hovered ? _kTealLight : _kTeal, size: 26)),
+            const SizedBox(height: 18),
+            Text(widget.item.value,
+                style: GoogleFonts.playfairDisplay(
+                    color: _hovered ? _kTealLight : _kDark,
+                    fontSize: 36,
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.italic)),
+            const SizedBox(height: 8),
+            Text(widget.item.label,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.nunito(
+                    color: _hovered ? Colors.white60 : _kLight,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13)),
+          ]),
         ),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: _hovered
-                    ? _kTealLight.withOpacity(0.2)
-                    : _kTeal.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(widget.data.icon,
-                  color: _hovered ? _kTealLight : _kTeal, size: 24)),
-          const SizedBox(width: 18),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(widget.data.title,
-                    style: GoogleFonts.nunito(
-                        color: _hovered ? Colors.white : _kHeading,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700)),
-                const SizedBox(height: 8),
-                Text(widget.data.desc,
-                    style: GoogleFonts.nunito(
-                        color: _hovered ? Colors.white60 : _kLight,
-                        fontSize: 13,
-                        height: 1.65)),
-              ])),
-        ]),
       ),
     );
   }
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  7 · TESTIMONIALS — realistic early patient reviews
+//  5 · TESTIMONIALS — dark bg, 3D tilt
 // ═══════════════════════════════════════════════════════════════════
 class _TestimonialsSection extends StatelessWidget {
   const _TestimonialsSection();
   static const _reviews = [
     _ReviewData(
-      'Manpreet Kaur',
-      "Bahut hi achha experience tha. Dr. Ravinder ne bahut carefully dental cleaning kiti — bilkul pain nahi si. Highly recommended!",
-      '⭐⭐⭐⭐⭐',
-    ),
+        'Manpreet Kaur',
+        "Bahut hi achha experience tha. Dr. Ravinder ne bahut carefully dental cleaning kiti — bilkul pain nahi si. Highly recommended!",
+        '⭐⭐⭐⭐⭐'),
     _ReviewData(
-      'Arjun Singh',
-      "Acne treatment started recently and already seeing good results. Dr. Ravinder explained everything clearly. Bahut professional clinic hai.",
-      '⭐⭐⭐⭐⭐',
-    ),
+        'Arjun Singh',
+        "Acne treatment started recently and already seeing good results. Dr. Ravinder explained everything clearly. Bahut professional clinic hai.",
+        '⭐⭐⭐⭐⭐'),
     _ReviewData(
-      'Simran Bhatia',
-      "Sadi locality vich hi itni premium clinic aa gayi. Kartarpur de liye bahut vadia hai. Doctor da behaviour bahut caring hai.",
-      '⭐⭐⭐⭐⭐',
-    ),
+        'Simran Bhatia',
+        "Sadi locality vich hi itni premium clinic aa gayi. Kartarpur de liye bahut vadia hai. Doctor da behaviour bahut caring hai.",
+        '⭐⭐⭐⭐⭐'),
   ];
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
-    return _FadeSlideIn(
-        child: Container(
-      width: double.infinity,
-      padding:
-          EdgeInsets.symmetric(vertical: 80, horizontal: isMobile ? 24 : 80),
-      color: Colors.white,
-      child: Column(children: [
-        const _SectionBadge(label: 'WHAT PATIENTS SAY'),
-        const SizedBox(height: 16),
-        Text('Early Smiles,\nReal Feedback',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.playfairDisplay(
-                color: _kHeading,
-                fontSize: isMobile ? 28 : 42,
-                fontWeight: FontWeight.w700,
-                height: 1.2)),
-        const SizedBox(height: 8),
-        Text("From our first patients — honest feedback we're proud of.",
-            textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(color: _kLight, fontSize: 14)),
-        const SizedBox(height: 52),
-        Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: _reviews.map((r) => _ReviewCard(data: r)).toList()),
-      ]),
-    ));
+    return _RevealOnScroll(
+      child: Container(
+        width: double.infinity,
+        padding:
+            EdgeInsets.symmetric(vertical: 90, horizontal: isMobile ? 24 : 80),
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                colors: [_kDeep, _kDark],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter)),
+        child: Column(children: [
+          const _SectionBadge(label: 'WHAT PATIENTS SAY', light: true),
+          const SizedBox(height: 18),
+          Text('Early Smiles,\nReal Feedback',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.playfairDisplay(
+                  color: Colors.white,
+                  fontSize: isMobile ? 30 : 44,
+                  fontWeight: FontWeight.w700,
+                  height: 1.2)),
+          const SizedBox(height: 10),
+          Text("From our first patients — honest feedback we're proud of.",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(color: Colors.white38, fontSize: 14)),
+          const SizedBox(height: 56),
+          Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              alignment: WrapAlignment.center,
+              children: _reviews.map((r) => _ReviewTiltCard(data: r)).toList()),
+        ]),
+      ),
+    );
   }
 }
 
@@ -950,47 +1219,91 @@ class _ReviewData {
   const _ReviewData(this.name, this.review, this.stars);
 }
 
-class _ReviewCard extends StatelessWidget {
+class _ReviewTiltCard extends StatefulWidget {
   final _ReviewData data;
-  const _ReviewCard({required this.data});
+  const _ReviewTiltCard({required this.data});
+  @override
+  State<_ReviewTiltCard> createState() => _ReviewTiltCardState();
+}
+
+class _ReviewTiltCardState extends State<_ReviewTiltCard> {
+  Offset _mouse = Offset.zero;
+  bool _hovered = false;
+
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
-    return Container(
-      width: (w < 700 ? w - 48.0 : 320.0).clamp(260.0, 380.0),
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: _kIvory,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _kTeal.withOpacity(0.15)),
-        boxShadow: [
-          BoxShadow(
-              color: _kDark.withOpacity(0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 6))
-        ],
+    final cardW = (w < 700 ? w - 48.0 : 340.0).clamp(260.0, 400.0);
+    final tiltX = _hovered ? _mouse.dy * 0.14 : 0.0;
+    final tiltY = _hovered ? -_mouse.dx * 0.14 : 0.0;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) {
+        setState(() {
+          _hovered = false;
+          _mouse = Offset.zero;
+        });
+      },
+      onHover: (e) {
+        final x = (e.localPosition.dx / cardW - 0.5) * 2;
+        final y = (e.localPosition.dy / 200 - 0.5) * 2;
+        setState(() => _mouse = Offset(x, y));
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.001)
+          ..rotateX(tiltX)
+          ..rotateY(tiltY)
+          ..translate(0.0, _hovered ? -10.0 : 0.0),
+        child: Container(
+          width: cardW,
+          padding: const EdgeInsets.all(30),
+          decoration: BoxDecoration(
+              color: _hovered
+                  ? const Color(0xFF0D3B34)
+                  : Colors.white.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                  color: _hovered
+                      ? _kTeal.withOpacity(0.5)
+                      : _kTealLight.withOpacity(0.15)),
+              boxShadow: _hovered
+                  ? [
+                      BoxShadow(
+                          color: _kTeal.withOpacity(0.25),
+                          blurRadius: 40,
+                          offset: const Offset(0, 14))
+                    ]
+                  : []),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(widget.data.stars, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 16),
+            Text('"${widget.data.review}"',
+                style: GoogleFonts.nunito(
+                    color: _hovered ? Colors.white : Colors.white60,
+                    fontSize: 14,
+                    height: 1.75,
+                    fontStyle: FontStyle.italic)),
+            const SizedBox(height: 20),
+            Row(children: [
+              CircleAvatar(
+                  radius: 18,
+                  backgroundColor: _kTeal.withOpacity(0.2),
+                  child: Icon(Icons.person, size: 18, color: _kTealLight)),
+              const SizedBox(width: 12),
+              Text(widget.data.name,
+                  style: GoogleFonts.nunito(
+                      color: _kTealLight,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13)),
+            ]),
+          ]),
+        ),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(data.stars, style: const TextStyle(fontSize: 16)),
-        const SizedBox(height: 14),
-        Text('"${data.review}"',
-            style: GoogleFonts.nunito(
-                color: _kBody,
-                fontSize: 14,
-                height: 1.7,
-                fontStyle: FontStyle.italic)),
-        const SizedBox(height: 18),
-        Row(children: [
-          CircleAvatar(
-              radius: 16,
-              backgroundColor: _kTeal.withOpacity(0.15),
-              child: Icon(Icons.person, size: 18, color: _kTeal)),
-          const SizedBox(width: 10),
-          Text(data.name,
-              style: GoogleFonts.nunito(
-                  color: _kHeading, fontWeight: FontWeight.w700, fontSize: 13)),
-        ]),
-      ]),
     );
   }
 }
@@ -998,26 +1311,39 @@ class _ReviewCard extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════════════════════════
-class _FadeSlideIn extends StatefulWidget {
+enum _RevealDirection { up, left, right }
+
+class _RevealOnScroll extends StatefulWidget {
   final Widget child;
   final Duration delay;
-  const _FadeSlideIn({required this.child, this.delay = Duration.zero});
+  final _RevealDirection direction;
+  const _RevealOnScroll({
+    required this.child,
+    this.delay = Duration.zero,
+    this.direction = _RevealDirection.up,
+  });
   @override
-  State<_FadeSlideIn> createState() => _FadeSlideInState();
+  State<_RevealOnScroll> createState() => _RevealOnScrollState();
 }
 
-class _FadeSlideInState extends State<_FadeSlideIn>
+class _RevealOnScrollState extends State<_RevealOnScroll>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _fade;
   late final Animation<Offset> _slide;
+
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 900));
     _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-    _slide = Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero)
+    final begin = switch (widget.direction) {
+      _RevealDirection.up => const Offset(0, 0.18),
+      _RevealDirection.left => const Offset(-0.12, 0),
+      _RevealDirection.right => const Offset(0.12, 0),
+    };
+    _slide = Tween<Offset>(begin: begin, end: Offset.zero)
         .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     Future.delayed(widget.delay, () {
       if (mounted) _ctrl.forward();
@@ -1042,23 +1368,22 @@ class _SectionBadge extends StatelessWidget {
   const _SectionBadge({required this.label, this.light = false});
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: light ? _kTealLight.withOpacity(0.2) : _kTeal.withOpacity(0.1),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+      decoration: BoxDecoration(
+          color:
+              light ? _kTealLight.withOpacity(0.15) : _kTeal.withOpacity(0.1),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
               color: light
-                  ? _kTealLight.withOpacity(0.5)
+                  ? _kTealLight.withOpacity(0.45)
                   : _kTeal.withOpacity(0.35),
-              width: 1.2),
-        ),
-        child: Text(label,
-            style: GoogleFonts.nunito(
-                color: light ? _kTealLight : _kTeal,
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 2.5)),
-      );
+              width: 1.2)),
+      child: Text(label,
+          style: GoogleFonts.nunito(
+              color: light ? _kTealLight : _kTeal,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 2.5)));
 }
 
 class _HighlightChip extends StatelessWidget {
@@ -1066,13 +1391,12 @@ class _HighlightChip extends StatelessWidget {
   const _HighlightChip({required this.label});
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-            color: _kTeal.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: _kTeal.withOpacity(0.2))),
-        child: Text(label,
-            style: GoogleFonts.nunito(
-                color: _kDark, fontSize: 13, fontWeight: FontWeight.w500)),
-      );
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+      decoration: BoxDecoration(
+          color: _kTeal.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: _kTeal.withOpacity(0.22))),
+      child: Text(label,
+          style: GoogleFonts.nunito(
+              color: _kDark, fontSize: 13, fontWeight: FontWeight.w600)));
 }
