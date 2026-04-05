@@ -1,38 +1,156 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Dr. Ravinder's Dental &amp; Skin Aesthetic Clinic — Kartarpur, Punjab">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="drsite">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>drsite</title>
+  <title>Dr. Ravinder's Clinic</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #040F0E;
+    }
+
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, #0D3B34 0%, #071E1B 60%, #040F0E 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #splash.hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .center-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .logo-wrap {
+      animation: fadeScaleIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+      line-height: 0;
+    }
+
+    .logo-wrap img {
+      width: 160x;
+      height: 160px;        /* ← changed from 150px */
+      object-fit: contain;
+      object-position: bottom;  /* ← added */
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 32px rgba(207, 161, 93, 0.5)) brightness(1.05);
+      display: block;
+      margin-bottom: -45px;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #CFA15D, transparent);
+      margin: 6px 0;
+      animation: fadeScaleIn 1.2s 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    .clinic-name {
+      margin-top: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 22px;
+      font-style: italic;
+      color: #CFA15D;
+      letter-spacing: 1px;
+      text-align: center;
+      animation: fadeScaleIn 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    .clinic-sub {
+      margin-top: 2px;
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      color: rgba(207, 161, 93, 0.55);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-align: center;
+      animation: fadeScaleIn 1.2s 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    .dots {
+      margin-top: 20px;
+      display: flex;
+      gap: 8px;
+      animation: fadeScaleIn 0.6s 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #CFA15D;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes fadeScaleIn {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50%       { opacity: 1;   transform: scale(1.2); }
+    }
+  </style>
 </head>
+
 <body>
+  <div id="splash">
+    <div class="center-group">
+      <div class="logo-wrap">
+        <img src="assets/assets/images/logo.png"
+             onerror="this.style.display='none'"
+             alt="Dr. Ravinder's Clinic Logo" />
+      </div>
+      <div class="clinic-name">Dr. Ravinder's</div>
+      <div class="divider"></div>
+      <div class="clinic-sub">Dental &amp; Skin Aesthetic Clinic</div>
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      const splash = document.getElementById('splash');
+      splash.classList.add('hide');
+      setTimeout(() => splash.remove(), 900);
+    });
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

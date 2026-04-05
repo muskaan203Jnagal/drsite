@@ -1,8 +1,19 @@
-import 'package:drsite/router.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+// ================================================================
+//  main.dart  —  Firebase initialize karke app start karo
+// ================================================================
 
-void main() => runApp(const App());
+import 'package:drsite/router.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'firebase_options.dart'; // FlutterFire CLI se generate hoga
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const App());
+}
 
 class App extends StatelessWidget {
   const App({super.key});
