@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-2026/04/07-15:34:42.227 2630 Reusing MANIFEST C:\Users\HP\AppData\Local\Temp\flutter_tools.c713b8f7\flutter_tools_chrome_device.d65236f2\Default\Extension Scripts/MANIFEST-000001
-2026/04/07-15:34:42.229 2630 Recovering log #3
-2026/04/07-15:34:42.229 2630 Reusing old log C:\Users\HP\AppData\Local\Temp\flutter_tools.c713b8f7\flutter_tools_chrome_device.d65236f2\Default\Extension Scripts/000003.log 
-=======
-2026/04/05-23:19:15.814 259c Reusing MANIFEST C:\Users\HP\AppData\Local\Temp\flutter_tools.a958310f\flutter_tools_chrome_device.d3999dfd\Default\Extension Scripts/MANIFEST-000001
-2026/04/05-23:19:15.815 259c Recovering log #3
-2026/04/05-23:19:15.815 259c Reusing old log C:\Users\HP\AppData\Local\Temp\flutter_tools.a958310f\flutter_tools_chrome_device.d3999dfd\Default\Extension Scripts/000003.log 
->>>>>>> origin
+2026/04/07-21:30:20.538 487c Creating DB C:\Users\HP\AppData\Local\Temp\flutter_tools.dd068a32\flutter_tools_chrome_device.9e0d5a8b\Default\Extension Scripts since it was missing.
+2026/04/07-21:30:20.547 487c Reusing MANIFEST C:\Users\HP\AppData\Local\Temp\flutter_tools.dd068a32\flutter_tools_chrome_device.9e0d5a8b\Default\Extension Scripts/MANIFEST-000001
+2026/04/07-21:30:20.548 487c Recovering log #3
+2026/04/07-21:30:20.548 487c Reusing old log C:\Users\HP\AppData\Local\Temp\flutter_tools.dd068a32\flutter_tools_chrome_device.9e0d5a8b\Default\Extension Scripts/000003.log 

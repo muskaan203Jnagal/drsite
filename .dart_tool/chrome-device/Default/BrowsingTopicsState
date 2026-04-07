@@ -1,17 +1,12 @@
 {
    "epochs": [ {
-      "calculation_time": "13419884130990265",
+      "calculation_time": "13420051223768702",
       "config_version": 0,
       "model_version": "0",
       "padded_top_topics_start_index": 0,
       "taxonomy_version": 0,
       "top_topics_and_observing_domains": [  ]
    } ],
-<<<<<<< HEAD
-   "hex_encoded_hmac_key": "966351B51D0F28ABDACD2354E4B8C8D8B508CF5F1328299D3BCEF3360F3531AB",
-   "next_scheduled_calculation_time": "13420288810969478"
-=======
    "hex_encoded_hmac_key": "0000000000000000000000000000000000000000000000000000000000000000",
-   "next_scheduled_calculation_time": "13420488930990372"
->>>>>>> origin
+   "next_scheduled_calculation_time": "13420656023769005"
 }

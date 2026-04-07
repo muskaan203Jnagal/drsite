@@ -1,13 +1,12 @@
 // ================================================================
 //  sections/services.dart  —  Premium Light Theme
-//  Palette: Deep Blue #0A2540 · Rose #E8AEB7 · Gold #CFA15D · Ivory #FAFAF8
+//  DNA-style: Full bg image behind grid, hover → solid teal overlay
 // ================================================================
 
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/header.dart'; // kNavBarHeight
+import '../widgets/header.dart';
 
 // ── Palette ───────────────────────────────────────────────────────
 const Color _kDark = Color(0xFF0A2E2A);
@@ -15,83 +14,44 @@ const Color _kTealLight = Color(0xFF5EEAD4);
 const Color _kTeal = Color(0xFF0D9E8C);
 const Color _kIvory = Color(0xFFF0FDFA);
 const Color _kCard = Color(0xFFFFFFFF);
+const Color _kOverlay = Color(0xFF0D9E8C); // solid teal fill on hover
 
 // ── Service data ──────────────────────────────────────────────────
 class _ServiceItem {
   final IconData icon;
   final String title;
   final String desc;
-  final String imagePath; // ← NEW: background image for card
-  const _ServiceItem(this.icon, this.title, this.desc, this.imagePath);
+  const _ServiceItem(this.icon, this.title, this.desc);
 }
 
-const _kDentalImg = 'assets/images/dentist_service.jpg';
-const _kDermaImg = 'assets/images/derma_service.jpg';
-
 const _kDental = [
-  _ServiceItem(
-      Icons.cleaning_services_rounded,
-      'Teeth Cleaning',
-      'Deep scaling & polishing to remove plaque, tartar and prevent gum disease.',
-      _kDentalImg),
-  _ServiceItem(
-      Icons.wb_incandescent_outlined,
-      'Teeth Whitening',
-      'Professional whitening treatment for a brighter, radiant smile in one session.',
-      _kDentalImg),
-  _ServiceItem(
-      Icons.straighten_rounded,
-      'Braces & Aligners',
-      'Metal braces or clear aligners for a perfectly aligned, confident smile.',
-      _kDentalImg),
-  _ServiceItem(
-      Icons.local_hospital_rounded,
-      'Root Canal',
-      'Pain-free root canal treatment using modern techniques to save your natural tooth.',
-      _kDentalImg),
-  _ServiceItem(
-      Icons.layers_rounded,
-      'Dental Implants',
-      'Permanent, natural-looking tooth replacement that restores full function and beauty.',
-      _kDentalImg),
-  _ServiceItem(
-      Icons.blur_circular_rounded,
-      'Digital X-Ray',
-      'High-resolution digital X-rays for accurate diagnosis with minimal radiation exposure.',
-      _kDentalImg),
+  _ServiceItem(Icons.cleaning_services_rounded, 'Teeth Cleaning',
+      'Deep scaling & polishing to remove plaque, tartar and prevent gum disease.'),
+  _ServiceItem(Icons.wb_incandescent_outlined, 'Teeth Whitening',
+      'Professional whitening treatment for a brighter, radiant smile in one session.'),
+  _ServiceItem(Icons.straighten_rounded, 'Braces & Aligners',
+      'Metal braces or clear aligners for a perfectly aligned, confident smile.'),
+  _ServiceItem(Icons.local_hospital_rounded, 'Root Canal',
+      'Pain-free root canal treatment using modern techniques to save your natural tooth.'),
+  _ServiceItem(Icons.layers_rounded, 'Dental Implants',
+      'Permanent, natural-looking tooth replacement that restores full function and beauty.'),
+  _ServiceItem(Icons.blur_circular_rounded, 'Digital X-Ray',
+      'High-resolution digital X-rays for accurate diagnosis with minimal radiation exposure.'),
 ];
 
 const _kDerm = [
-  _ServiceItem(
-      Icons.face_retouching_natural_rounded,
-      'Acne Treatment',
-      'Advanced therapies to clear active acne and prevent future breakouts permanently.',
-      _kDermaImg),
-  _ServiceItem(
-      Icons.flash_on_rounded,
-      'Laser Therapy',
-      'Targeted laser for pigmentation, hair removal, skin resurfacing and rejuvenation.',
-      _kDermaImg),
-  _ServiceItem(
-      Icons.water_drop_rounded,
-      'HydraFacial',
-      'Deep cleansing, exfoliation and intense hydration for instantly glowing skin.',
-      _kDermaImg),
-  _ServiceItem(
-      Icons.auto_awesome_rounded,
-      'Anti-Aging',
-      'Botox, fillers and chemical peels to restore a youthful, radiant appearance.',
-      _kDermaImg),
-  _ServiceItem(
-      Icons.spa_rounded,
-      'Hair Restoration',
-      'PRP therapy and mesotherapy for proven hair loss prevention and regrowth.',
-      _kDermaImg),
-  _ServiceItem(
-      Icons.psychology_rounded,
-      'Skin Consultation',
-      'Personalised skin analysis and tailored treatment planning with Dr. Ravinder.',
-      _kDermaImg),
+  _ServiceItem(Icons.face_retouching_natural_rounded, 'Acne Treatment',
+      'Advanced therapies to clear active acne and prevent future breakouts permanently.'),
+  _ServiceItem(Icons.flash_on_rounded, 'Laser Therapy',
+      'Targeted laser for pigmentation, hair removal, skin resurfacing and rejuvenation.'),
+  _ServiceItem(Icons.water_drop_rounded, 'HydraFacial',
+      'Deep cleansing, exfoliation and intense hydration for instantly glowing skin.'),
+  _ServiceItem(Icons.auto_awesome_rounded, 'Anti-Aging',
+      'Botox, fillers and chemical peels to restore a youthful, radiant appearance.'),
+  _ServiceItem(Icons.spa_rounded, 'Hair Restoration',
+      'PRP therapy and mesotherapy for proven hair loss prevention and regrowth.'),
+  _ServiceItem(Icons.psychology_rounded, 'Skin Consultation',
+      'Personalised skin analysis and tailored treatment planning with Dr. Ravinder.'),
 ];
 
 // ════════════════════════════════════════════════════════════════
@@ -99,7 +59,6 @@ const _kDerm = [
 // ════════════════════════════════════════════════════════════════
 class ServicesPage extends StatefulWidget {
   const ServicesPage({super.key});
-
   @override
   State<ServicesPage> createState() => _ServicesPageState();
 }
@@ -162,6 +121,7 @@ class _ServicesPageState extends State<ServicesPage>
                     subtitle:
                         'Complete dental care from routine check-ups to advanced cosmetic treatments — all under one roof.',
                     items: _kDental,
+                    bgImage: 'assets/images/dentist_service.jpg',
                     isWide: isWide,
                   ),
                 ),
@@ -184,6 +144,7 @@ class _ServicesPageState extends State<ServicesPage>
                     subtitle:
                         'Expert skin, hair and laser treatments tailored to your unique skin type and beauty goals.',
                     items: _kDerm,
+                    bgImage: 'assets/images/derma_service.jpg',
                     isWide: isWide,
                   ),
                 ),
@@ -203,7 +164,7 @@ class _ServicesPageState extends State<ServicesPage>
     );
   }
 
-  // ── HERO ────────────────────────────────────────────────────────
+  // ── HERO ──────────────────────────────────────────────────────
   Widget _buildHero(bool isWide) {
     return Container(
       width: double.infinity,
@@ -212,7 +173,6 @@ class _ServicesPageState extends State<ServicesPage>
           horizontal: isWide ? 80 : 24, vertical: isWide ? 80 : 56),
       child: Column(
         children: [
-          // Teal tag
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
@@ -220,15 +180,12 @@ class _ServicesPageState extends State<ServicesPage>
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: _kTeal.withOpacity(0.4)),
             ),
-            child: Text(
-              'WHAT WE OFFER',
-              style: GoogleFonts.nunito(
-                color: _kTeal,
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.8,
-              ),
-            ),
+            child: Text('WHAT WE OFFER',
+                style: GoogleFonts.nunito(
+                    color: _kTeal,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.8)),
           ),
           const SizedBox(height: 28),
           RichText(
@@ -237,17 +194,14 @@ class _ServicesPageState extends State<ServicesPage>
               TextSpan(
                 text: 'Our ',
                 style: GoogleFonts.dmSerifDisplay(
-                  fontSize: isWide ? 64 : 42,
-                  color: _kDark,
-                ),
+                    fontSize: isWide ? 64 : 42, color: _kDark),
               ),
               TextSpan(
                 text: 'Services',
                 style: GoogleFonts.dmSerifDisplay(
-                  fontSize: isWide ? 64 : 42,
-                  color: _kTealLight,
-                  fontStyle: FontStyle.italic,
-                ),
+                    fontSize: isWide ? 64 : 42,
+                    color: _kTealLight,
+                    fontStyle: FontStyle.italic),
               ),
             ]),
           ),
@@ -279,7 +233,7 @@ class _ServicesPageState extends State<ServicesPage>
     );
   }
 
-  // ── SERVICE SECTION ─────────────────────────────────────────────
+  // ── SERVICE SECTION ──────────────────────────────────────────
   Widget _buildSection({
     required BuildContext context,
     required String tag,
@@ -287,6 +241,7 @@ class _ServicesPageState extends State<ServicesPage>
     required String accent,
     required String subtitle,
     required List<_ServiceItem> items,
+    required String bgImage,
     required bool isWide,
   }) {
     return Padding(
@@ -335,18 +290,13 @@ class _ServicesPageState extends State<ServicesPage>
                     height: 1.7)),
           ),
           const SizedBox(height: 40),
-          LayoutBuilder(builder: (ctx, constraints) {
-            final cols = constraints.maxWidth > 640
-                ? 3
-                : (constraints.maxWidth > 420 ? 2 : 1);
-            return _ServiceGrid(items: items, cols: cols);
-          }),
+          _BgImageGrid(items: items, bgImage: bgImage, isWide: isWide),
         ],
       ),
     );
   }
 
-  // ── CTA SECTION ─────────────────────────────────────────────────
+  // ── CTA ───────────────────────────────────────────────────────
   Widget _buildCTA(BuildContext context, bool isWide) {
     return Container(
       margin: EdgeInsets.symmetric(
@@ -363,19 +313,18 @@ class _ServicesPageState extends State<ServicesPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Ready to get started?",
-                        style: GoogleFonts.dmSerifDisplay(
-                            color: Colors.white,
-                            fontSize: 38,
-                            fontStyle: FontStyle.italic),
-                      ),
+                      Text("Ready to get started?",
+                          style: GoogleFonts.dmSerifDisplay(
+                              color: Colors.white,
+                              fontSize: 38,
+                              fontStyle: FontStyle.italic)),
                       const SizedBox(height: 12),
                       Text(
-                        "Book your consultation today. Expert care is just one click away.",
-                        style: GoogleFonts.nunito(
-                            color: Colors.white60, fontSize: 15, height: 1.6),
-                      ),
+                          "Book your consultation today. Expert care is just one click away.",
+                          style: GoogleFonts.nunito(
+                              color: Colors.white60,
+                              fontSize: 15,
+                              height: 1.6)),
                     ],
                   ),
                 ),
@@ -396,19 +345,16 @@ class _ServicesPageState extends State<ServicesPage>
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Ready to get started?",
-                  style: GoogleFonts.dmSerifDisplay(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontStyle: FontStyle.italic),
-                ),
+                Text("Ready to get started?",
+                    style: GoogleFonts.dmSerifDisplay(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontStyle: FontStyle.italic)),
                 const SizedBox(height: 12),
                 Text(
-                  "Book your consultation today. Expert care is just one click away.",
-                  style: GoogleFonts.nunito(
-                      color: Colors.white60, fontSize: 14, height: 1.6),
-                ),
+                    "Book your consultation today. Expert care is just one click away.",
+                    style: GoogleFonts.nunito(
+                        color: Colors.white60, fontSize: 14, height: 1.6)),
                 const SizedBox(height: 28),
                 _CTAButton(
                     label: "Book Appointment",
@@ -423,241 +369,228 @@ class _ServicesPageState extends State<ServicesPage>
 }
 
 // ════════════════════════════════════════════════════════════════
-//  Service Grid
+//  _BgImageGrid
+//  Single background image behind a 3-col grid.
+//  Cells are transparent — bg shows through.
+//  On hover → individual cell fills solid.
 // ════════════════════════════════════════════════════════════════
-class _ServiceGrid extends StatelessWidget {
+class _BgImageGrid extends StatelessWidget {
   final List<_ServiceItem> items;
-  final int cols;
-  const _ServiceGrid({required this.items, required this.cols});
+  final String bgImage;
+  final bool isWide;
+
+  const _BgImageGrid({
+    required this.items,
+    required this.bgImage,
+    required this.isWide,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: List.generate(
-          items.length, (i) => _ServiceCard(item: items[i], index: i)),
+    final cols = isWide ? 3 : 2;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: LayoutBuilder(builder: (_, constraints) {
+        final cellW = constraints.maxWidth / cols;
+        const cellH = 220.0;
+        final rows = (items.length / cols).ceil();
+
+        return Stack(
+          children: [
+            // ── Background image fills entire grid ───────────
+            SizedBox(
+              height: cellH * rows,
+              width: constraints.maxWidth,
+              child: Image.asset(bgImage, fit: BoxFit.cover),
+            ),
+            // ── Dark scrim ────────────────────────────────────
+            SizedBox(
+              height: cellH * rows,
+              width: constraints.maxWidth,
+              child: ColoredBox(color: _kDark.withOpacity(0.48)),
+            ),
+            // ── Grid lines ────────────────────────────────────
+            SizedBox(
+              height: cellH * rows,
+              width: constraints.maxWidth,
+              child: CustomPaint(
+                painter: _GridLinePainter(cols: cols, rows: rows, cellH: cellH),
+              ),
+            ),
+            // ── Cells ─────────────────────────────────────────
+            SizedBox(
+              height: cellH * rows,
+              width: constraints.maxWidth,
+              child: Wrap(
+                children: List.generate(
+                  items.length,
+                  (i) => _GridCell(
+                    item: items[i],
+                    width: cellW,
+                    height: cellH,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }
 
-// ════════════════════════════════════════════════════════════════
-//  Flip Service Card
-//  FRONT → background image + dark overlay + icon + title
-//  BACK  → solid dark bg + description text
-// ════════════════════════════════════════════════════════════════
-class _ServiceCard extends StatefulWidget {
-  final _ServiceItem item;
-  final int index;
-  const _ServiceCard({required this.item, required this.index});
+// ── Grid line painter ─────────────────────────────────────────────
+class _GridLinePainter extends CustomPainter {
+  final int cols, rows;
+  final double cellH;
+  const _GridLinePainter(
+      {required this.cols, required this.rows, required this.cellH});
 
   @override
-  State<_ServiceCard> createState() => _ServiceCardState();
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.20)
+      ..strokeWidth = 0.8;
+
+    for (int c = 1; c < cols; c++) {
+      final x = size.width / cols * c;
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (int r = 1; r < rows; r++) {
+      final y = cellH * r;
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GridLinePainter o) => false;
 }
 
-class _ServiceCardState extends State<_ServiceCard>
+// ════════════════════════════════════════════════════════════════
+//  _GridCell — transparent default, solid teal on hover
+// ════════════════════════════════════════════════════════════════
+class _GridCell extends StatefulWidget {
+  final _ServiceItem item;
+  final double width, height;
+  const _GridCell(
+      {required this.item, required this.width, required this.height});
+
+  @override
+  State<_GridCell> createState() => _GridCellState();
+}
+
+class _GridCellState extends State<_GridCell>
     with SingleTickerProviderStateMixin {
-  late AnimationController _flipCtrl;
-  late Animation<double> _flipAnim;
+  late AnimationController _ctrl;
+  late Animation<double> _anim;
 
   @override
   void initState() {
     super.initState();
-    _flipCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-    _flipAnim = Tween<double>(begin: 0, end: pi).animate(
-      CurvedAnimation(parent: _flipCtrl, curve: Curves.easeInOut),
-    );
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 260));
+    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
   }
 
   @override
   void dispose() {
-    _flipCtrl.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
-  void _onEnter(_) => _flipCtrl.forward();
-  void _onExit(_) => _flipCtrl.reverse();
-
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final isWide = width > 900;
-    final cardWidth = isWide
-        ? (width - 160 - 32) / 3
-        : width > 640
-            ? (width - 48 - 16) / 2
-            : width - 48.0;
-    const cardHeight = 220.0;
-
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: _onEnter,
-      onExit: _onExit,
+      onEnter: (_) => _ctrl.forward(),
+      onExit: (_) => _ctrl.reverse(),
       child: SizedBox(
-        width: cardWidth,
-        height: cardHeight,
-        child: AnimatedBuilder(
-          animation: _flipAnim,
-          builder: (_, __) {
-            final angle = _flipAnim.value;
-            final isFront = angle <= pi / 2;
+        width: widget.width,
+        height: widget.height,
+        child: Stack(
+          children: [
+            // Solid teal fill fades in on hover
+            FadeTransition(
+              opacity: _anim,
+              child: Container(color: _kOverlay.withOpacity(0.92)),
+            ),
 
-            // Perspective matrix
-            final matrix = Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(angle);
-
-            // Back side correction (mirror fix)
-            final backMatrix = Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(angle - pi);
-
-            return Transform(
-              transform: isFront ? matrix : backMatrix,
-              alignment: Alignment.center,
-              child: isFront
-                  ? _buildFront(cardWidth, cardHeight)
-                  : _buildBack(cardWidth, cardHeight),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  // ── FRONT: image bg + overlay + icon + title ──────────────────
-  Widget _buildFront(double w, double h) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background image
-          Image.asset(
-            widget.item.imagePath,
-            fit: BoxFit.cover,
-          ),
-          // Dark gradient overlay
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  _kDark.withOpacity(0.45),
-                  _kDark.withOpacity(0.72),
-                ],
+            // Default: icon + title (fades OUT on hover)
+            FadeTransition(
+              opacity: ReverseAnimation(_anim),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 62,
+                      height: 62,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: Colors.white.withOpacity(0.35), width: 1.5),
+                      ),
+                      child:
+                          Icon(widget.item.icon, color: Colors.white, size: 26),
+                    ),
+                    const SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        widget.item.title,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.nunito(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          // Teal border
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border:
-                  Border.all(color: _kTealLight.withOpacity(0.35), width: 1.2),
-            ),
-          ),
-          // Content: icon + title
-          Padding(
-            padding: const EdgeInsets.all(26),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: _kTealLight.withOpacity(0.22),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    widget.item.icon,
-                    color: _kTealLight,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  widget.item.title,
-                  style: GoogleFonts.nunito(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Hover to learn more →',
-                  style: GoogleFonts.nunito(
-                    color: _kTealLight.withOpacity(0.85),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  // ── BACK: dark solid + description ───────────────────────────
-  Widget _buildBack(double w, double h) {
-    return Container(
-      width: w,
-      height: h,
-      decoration: BoxDecoration(
-        color: _kDark,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _kTealLight.withOpacity(0.35), width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: _kDark.withOpacity(0.25),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(26),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: _kTealLight.withOpacity(0.18),
-              borderRadius: BorderRadius.circular(10),
+            // Hover: title + desc + Book Now (fades IN on hover)
+            FadeTransition(
+              opacity: _anim,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.item.title,
+                      style: GoogleFonts.dmSerifDisplay(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontStyle: FontStyle.italic),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      widget.item.desc,
+                      style: GoogleFonts.nunito(
+                          color: Colors.white.withOpacity(0.88),
+                          fontSize: 12.5,
+                          height: 1.6),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Book Now →',
+                      style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            child: Icon(widget.item.icon, color: _kTealLight, size: 20),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            widget.item.title,
-            style: GoogleFonts.nunito(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            widget.item.desc,
-            style: GoogleFonts.nunito(
-              color: Colors.white60,
-              fontSize: 13,
-              height: 1.65,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -665,8 +598,7 @@ class _ServiceCardState extends State<_ServiceCard>
 
 // ── Stat Chip ─────────────────────────────────────────────────────
 class _StatChip extends StatelessWidget {
-  final String value;
-  final String label;
+  final String value, label;
   const _StatChip({required this.value, required this.label});
 
   @override
