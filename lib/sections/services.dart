@@ -489,7 +489,7 @@ class _GridCellState extends State<_GridCell>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 260));
+        vsync: this, duration: const Duration(milliseconds: 400));
     _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
   }
 
@@ -513,7 +513,12 @@ class _GridCellState extends State<_GridCell>
             // Solid teal fill fades in on hover
             FadeTransition(
               opacity: _anim,
-              child: Container(color: _kOverlay.withOpacity(0.92)),
+              child: ClipPath(
+                clipper: DiagonalClipper(),
+                child: Container(
+                  color: _kOverlay.withOpacity(0.95),
+                ),
+              ),
             ),
 
             // Default: icon + title (fades OUT on hover)
@@ -553,39 +558,49 @@ class _GridCellState extends State<_GridCell>
             ),
 
             // Hover: title + desc + Book Now (fades IN on hover)
+            // Hover: title + desc + Book Now (Fade + Slide IN on hover)
             FadeTransition(
               opacity: _anim,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.item.title,
-                      style: GoogleFonts.dmSerifDisplay(
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.2), // thoda niche se aayega
+                  end: Offset.zero,
+                ).animate(_anim),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.item.title,
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 17,
-                          fontStyle: FontStyle.italic),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      widget.item.desc,
-                      style: GoogleFonts.nunito(
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        widget.item.desc,
+                        style: GoogleFonts.nunito(
                           color: Colors.white.withOpacity(0.88),
                           fontSize: 12.5,
-                          height: 1.6),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Book Now →',
-                      style: GoogleFonts.nunito(
+                          height: 1.6,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Book Now →',
+                        style: GoogleFonts.nunito(
                           color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5),
-                    ),
-                  ],
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -594,6 +609,22 @@ class _GridCellState extends State<_GridCell>
       ),
     );
   }
+}
+
+class DiagonalClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height * 0.7);
+    path.lineTo(0, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
 // ── Stat Chip ─────────────────────────────────────────────────────
