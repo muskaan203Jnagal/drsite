@@ -7,7 +7,6 @@
   <meta name="description" content="Dr. Ravinder's Dental &amp; Skin Aesthetic Clinic — Kartarpur, Punjab">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>Dr. Ravinder's Clinic</title>
@@ -20,7 +19,6 @@
       background-color: #040F0E;
     }
 
-    /* ── Splash Screen ── */
     #splash {
       position: fixed;
       inset: 0;
@@ -38,7 +36,6 @@
       visibility: hidden;
     }
 
-    /* Center group — logo + text ek saath */
     .center-group {
       display: flex;
       flex-direction: column;
@@ -46,7 +43,6 @@
       gap: 0;
     }
 
-    /* Logo */
     .logo-wrap {
       animation: fadeScaleIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       opacity: 0;
@@ -54,15 +50,16 @@
     }
 
     .logo-wrap img {
-      width: 150px;
-      height: 150px;
+      width: 160x;
+      height: 160px;        /* ← changed from 150px */
       object-fit: contain;
+      object-position: bottom;  /* ← added */
       mix-blend-mode: screen;
       filter: drop-shadow(0 0 32px rgba(207, 161, 93, 0.5)) brightness(1.05);
       display: block;
+      margin-bottom: -45px;
     }
 
-    /* Divider line */
     .divider {
       width: 60px;
       height: 1px;
@@ -72,7 +69,6 @@
       opacity: 0;
     }
 
-    /* Clinic name */
     .clinic-name {
       margin-top: 0;
       font-family: Georgia, 'Times New Roman', serif;
@@ -97,7 +93,6 @@
       opacity: 0;
     }
 
-    /* Loading dots */
     .dots {
       margin-top: 20px;
       display: flex;
@@ -130,7 +125,6 @@
 </head>
 
 <body>
-  <!-- ── Splash Screen ── -->
   <div id="splash">
     <div class="center-group">
       <div class="logo-wrap">
@@ -149,7 +143,6 @@
     </div>
   </div>
 
-  <!-- Flutter -->
   <script>
     window.addEventListener('flutter-first-frame', function () {
       const splash = document.getElementById('splash');
