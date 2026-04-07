@@ -3,6 +3,7 @@
 //  Palette: Deep Blue #0A2540 · Rose #E8AEB7 · Gold #CFA15D · Ivory #FAFAF8
 // ================================================================
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,37 +21,77 @@ class _ServiceItem {
   final IconData icon;
   final String title;
   final String desc;
-  const _ServiceItem(this.icon, this.title, this.desc);
+  final String imagePath; // ← NEW: background image for card
+  const _ServiceItem(this.icon, this.title, this.desc, this.imagePath);
 }
 
+const _kDentalImg = 'assets/images/dentist_service.jpg';
+const _kDermaImg = 'assets/images/derma_service.jpg';
+
 const _kDental = [
-  _ServiceItem(Icons.cleaning_services_rounded, 'Teeth Cleaning',
-      'Deep scaling & polishing to remove plaque, tartar and prevent gum disease.'),
-  _ServiceItem(Icons.wb_incandescent_outlined, 'Teeth Whitening',
-      'Professional whitening treatment for a brighter, radiant smile in one session.'),
-  _ServiceItem(Icons.straighten_rounded, 'Braces & Aligners',
-      'Metal braces or clear aligners for a perfectly aligned, confident smile.'),
-  _ServiceItem(Icons.local_hospital_rounded, 'Root Canal',
-      'Pain-free root canal treatment using modern techniques to save your natural tooth.'),
-  _ServiceItem(Icons.layers_rounded, 'Dental Implants',
-      'Permanent, natural-looking tooth replacement that restores full function and beauty.'),
-  _ServiceItem(Icons.blur_circular_rounded, 'Digital X-Ray',
-      'High-resolution digital X-rays for accurate diagnosis with minimal radiation exposure.'),
+  _ServiceItem(
+      Icons.cleaning_services_rounded,
+      'Teeth Cleaning',
+      'Deep scaling & polishing to remove plaque, tartar and prevent gum disease.',
+      _kDentalImg),
+  _ServiceItem(
+      Icons.wb_incandescent_outlined,
+      'Teeth Whitening',
+      'Professional whitening treatment for a brighter, radiant smile in one session.',
+      _kDentalImg),
+  _ServiceItem(
+      Icons.straighten_rounded,
+      'Braces & Aligners',
+      'Metal braces or clear aligners for a perfectly aligned, confident smile.',
+      _kDentalImg),
+  _ServiceItem(
+      Icons.local_hospital_rounded,
+      'Root Canal',
+      'Pain-free root canal treatment using modern techniques to save your natural tooth.',
+      _kDentalImg),
+  _ServiceItem(
+      Icons.layers_rounded,
+      'Dental Implants',
+      'Permanent, natural-looking tooth replacement that restores full function and beauty.',
+      _kDentalImg),
+  _ServiceItem(
+      Icons.blur_circular_rounded,
+      'Digital X-Ray',
+      'High-resolution digital X-rays for accurate diagnosis with minimal radiation exposure.',
+      _kDentalImg),
 ];
 
 const _kDerm = [
-  _ServiceItem(Icons.face_retouching_natural_rounded, 'Acne Treatment',
-      'Advanced therapies to clear active acne and prevent future breakouts permanently.'),
-  _ServiceItem(Icons.flash_on_rounded, 'Laser Therapy',
-      'Targeted laser for pigmentation, hair removal, skin resurfacing and rejuvenation.'),
-  _ServiceItem(Icons.water_drop_rounded, 'HydraFacial',
-      'Deep cleansing, exfoliation and intense hydration for instantly glowing skin.'),
-  _ServiceItem(Icons.auto_awesome_rounded, 'Anti-Aging',
-      'Botox, fillers and chemical peels to restore a youthful, radiant appearance.'),
-  _ServiceItem(Icons.spa_rounded, 'Hair Restoration',
-      'PRP therapy and mesotherapy for proven hair loss prevention and regrowth.'),
-  _ServiceItem(Icons.psychology_rounded, 'Skin Consultation',
-      'Personalised skin analysis and tailored treatment planning with Dr. Ravinder.'),
+  _ServiceItem(
+      Icons.face_retouching_natural_rounded,
+      'Acne Treatment',
+      'Advanced therapies to clear active acne and prevent future breakouts permanently.',
+      _kDermaImg),
+  _ServiceItem(
+      Icons.flash_on_rounded,
+      'Laser Therapy',
+      'Targeted laser for pigmentation, hair removal, skin resurfacing and rejuvenation.',
+      _kDermaImg),
+  _ServiceItem(
+      Icons.water_drop_rounded,
+      'HydraFacial',
+      'Deep cleansing, exfoliation and intense hydration for instantly glowing skin.',
+      _kDermaImg),
+  _ServiceItem(
+      Icons.auto_awesome_rounded,
+      'Anti-Aging',
+      'Botox, fillers and chemical peels to restore a youthful, radiant appearance.',
+      _kDermaImg),
+  _ServiceItem(
+      Icons.spa_rounded,
+      'Hair Restoration',
+      'PRP therapy and mesotherapy for proven hair loss prevention and regrowth.',
+      _kDermaImg),
+  _ServiceItem(
+      Icons.psychology_rounded,
+      'Skin Consultation',
+      'Personalised skin analysis and tailored treatment planning with Dr. Ravinder.',
+      _kDermaImg),
 ];
 
 // ════════════════════════════════════════════════════════════════
@@ -171,7 +212,7 @@ class _ServicesPageState extends State<ServicesPage>
           horizontal: isWide ? 80 : 24, vertical: isWide ? 80 : 56),
       child: Column(
         children: [
-          // Gold tag
+          // Teal tag
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
@@ -400,7 +441,11 @@ class _ServiceGrid extends StatelessWidget {
   }
 }
 
-// ── Hoverable Service Card ────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
+//  Flip Service Card
+//  FRONT → background image + dark overlay + icon + title
+//  BACK  → solid dark bg + description text
+// ════════════════════════════════════════════════════════════════
 class _ServiceCard extends StatefulWidget {
   final _ServiceItem item;
   final int index;
@@ -412,24 +457,29 @@ class _ServiceCard extends StatefulWidget {
 
 class _ServiceCardState extends State<_ServiceCard>
     with SingleTickerProviderStateMixin {
-  bool _hovered = false;
-  late AnimationController _ctrl;
-  late Animation<double> _scale;
+  late AnimationController _flipCtrl;
+  late Animation<double> _flipAnim;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 200));
-    _scale = Tween<double>(begin: 1.0, end: 1.025)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _flipCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _flipAnim = Tween<double>(begin: 0, end: pi).animate(
+      CurvedAnimation(parent: _flipCtrl, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _flipCtrl.dispose();
     super.dispose();
   }
+
+  void _onEnter(_) => _flipCtrl.forward();
+  void _onExit(_) => _flipCtrl.reverse();
 
   @override
   Widget build(BuildContext context) {
@@ -440,80 +490,174 @@ class _ServiceCardState extends State<_ServiceCard>
         : width > 640
             ? (width - 48 - 16) / 2
             : width - 48.0;
+    const cardHeight = 220.0;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) {
-        setState(() => _hovered = true);
-        _ctrl.forward();
-      },
-      onExit: (_) {
-        setState(() => _hovered = false);
-        _ctrl.reverse();
-      },
-      child: ScaleTransition(
-        scale: _scale,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          width: cardWidth,
-          padding: const EdgeInsets.all(26),
-          decoration: BoxDecoration(
-            color: _hovered ? _kDark : _kCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _hovered ? _kDark : _kTealLight.withOpacity(0.35),
-              width: 1.2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: _hovered
-                    ? _kDark.withOpacity(0.2)
-                    : _kDark.withOpacity(0.06),
-                blurRadius: _hovered ? 24 : 10,
-                offset: const Offset(0, 6),
-              )
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: _hovered
-                      ? _kTealLight.withOpacity(0.18)
-                      : _kTealLight.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  widget.item.icon,
-                  color: _hovered ? _kTealLight : _kDark,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                widget.item.title,
-                style: GoogleFonts.nunito(
-                  color: _hovered ? Colors.white : _kDark,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.item.desc,
-                style: GoogleFonts.nunito(
-                  color: _hovered ? Colors.white60 : _kDark.withOpacity(0.55),
-                  fontSize: 13,
-                  height: 1.65,
-                ),
-              ),
-            ],
-          ),
+      onEnter: _onEnter,
+      onExit: _onExit,
+      child: SizedBox(
+        width: cardWidth,
+        height: cardHeight,
+        child: AnimatedBuilder(
+          animation: _flipAnim,
+          builder: (_, __) {
+            final angle = _flipAnim.value;
+            final isFront = angle <= pi / 2;
+
+            // Perspective matrix
+            final matrix = Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(angle);
+
+            // Back side correction (mirror fix)
+            final backMatrix = Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(angle - pi);
+
+            return Transform(
+              transform: isFront ? matrix : backMatrix,
+              alignment: Alignment.center,
+              child: isFront
+                  ? _buildFront(cardWidth, cardHeight)
+                  : _buildBack(cardWidth, cardHeight),
+            );
+          },
         ),
+      ),
+    );
+  }
+
+  // ── FRONT: image bg + overlay + icon + title ──────────────────
+  Widget _buildFront(double w, double h) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          Image.asset(
+            widget.item.imagePath,
+            fit: BoxFit.cover,
+          ),
+          // Dark gradient overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _kDark.withOpacity(0.45),
+                  _kDark.withOpacity(0.72),
+                ],
+              ),
+            ),
+          ),
+          // Teal border
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border:
+                  Border.all(color: _kTealLight.withOpacity(0.35), width: 1.2),
+            ),
+          ),
+          // Content: icon + title
+          Padding(
+            padding: const EdgeInsets.all(26),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: _kTealLight.withOpacity(0.22),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    widget.item.icon,
+                    color: _kTealLight,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  widget.item.title,
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Hover to learn more →',
+                  style: GoogleFonts.nunito(
+                    color: _kTealLight.withOpacity(0.85),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── BACK: dark solid + description ───────────────────────────
+  Widget _buildBack(double w, double h) {
+    return Container(
+      width: w,
+      height: h,
+      decoration: BoxDecoration(
+        color: _kDark,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _kTealLight.withOpacity(0.35), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: _kDark.withOpacity(0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(26),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: _kTealLight.withOpacity(0.18),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(widget.item.icon, color: _kTealLight, size: 20),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            widget.item.title,
+            style: GoogleFonts.nunito(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            widget.item.desc,
+            style: GoogleFonts.nunito(
+              color: Colors.white60,
+              fontSize: 13,
+              height: 1.65,
+            ),
+          ),
+        ],
       ),
     );
   }
