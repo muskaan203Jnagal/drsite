@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 // ── Palette ───────────────────────────────────────────────────────
 const _kDark = Color(0xFF0A2E2A);
 const _kDeep = Color(0xFF071E1B);
@@ -64,6 +63,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
           _MissionSection(),
           _DoctorProfileSection(),
           _StatsSection(),
+          _BeforeAfterSection(),
           _TestimonialsSection(),
         ]),
       ),
@@ -146,9 +146,9 @@ class _VideoHeroSectionState extends State<_VideoHeroSection>
     super.initState();
     widget.scrollCtrl.addListener(_onScroll);
 
-    _bgCtrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 12))
-      ..repeat();
+    _bgCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 12))
+          ..repeat();
 
     _textCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1400))
@@ -190,181 +190,180 @@ class _VideoHeroSectionState extends State<_VideoHeroSection>
       height: heroH,
       child: Stack(fit: StackFit.expand, children: [
         // ── 3D Animated Background with parallax ────────────────
-          Positioned(
-            top: -_scrollOffset * 0.4,
-            left: 0,
-            right: 0,
-            height: heroH + 200,
-            child: AnimatedBuilder(
-              animation: _bgCtrl,
-              builder: (_, __) => CustomPaint(
-                painter: _HeroBgPainter(_bgCtrl.value),
-              ),
+        Positioned(
+          top: -_scrollOffset * 0.4,
+          left: 0,
+          right: 0,
+          height: heroH + 200,
+          child: AnimatedBuilder(
+            animation: _bgCtrl,
+            builder: (_, __) => CustomPaint(
+              painter: _HeroBgPainter(_bgCtrl.value),
             ),
           ),
+        ),
 
-          // Dark gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _kDeep.withOpacity(0.92),
-                  _kDark.withOpacity(0.70),
-                  _kDark.withOpacity(0.25),
-                ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-              ),
+        // Dark gradient
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                _kDeep.withOpacity(0.92),
+                _kDark.withOpacity(0.70),
+                _kDark.withOpacity(0.25),
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
             ),
           ),
+        ),
 
-          // Teal left vignette
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [_kTeal.withOpacity(0.18), Colors.transparent],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
+        // Teal left vignette
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [_kTeal.withOpacity(0.18), Colors.transparent],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
             ),
           ),
+        ),
 
-          // Grid texture
-          CustomPaint(painter: _GridPainter()),
+        // Grid texture
+        CustomPaint(painter: _GridPainter()),
 
-          // Diagonal accent
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipPath(
-              clipper: _DiagClipper(),
-              child:
-                  Container(height: 120, color: _kTealLight.withOpacity(0.08)),
-            ),
+        // Diagonal accent
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: ClipPath(
+            clipper: _DiagClipper(),
+            child: Container(height: 120, color: _kTealLight.withOpacity(0.08)),
           ),
+        ),
 
-          // Decorative circles
-          Positioned(
-              top: -80,
-              right: -80,
-              child: Container(
-                  width: 340,
-                  height: 340,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border:
-                        Border.all(color: _kTeal.withOpacity(0.12), width: 1.5),
-                  ))),
-          Positioned(
-              top: 40,
-              right: 40,
-              child: Container(
-                  width: 180,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        color: _kTealLight.withOpacity(0.07), width: 1),
-                  ))),
+        // Decorative circles
+        Positioned(
+            top: -80,
+            right: -80,
+            child: Container(
+                width: 340,
+                height: 340,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border:
+                      Border.all(color: _kTeal.withOpacity(0.12), width: 1.5),
+                ))),
+        Positioned(
+            top: 40,
+            right: 40,
+            child: Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: _kTealLight.withOpacity(0.07), width: 1),
+                ))),
 
-          // Text
-          Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 80),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                FadeTransition(
-                  opacity: _badgeFade,
-                  child: SlideTransition(
-                    position: _badgeSlide,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 22, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: _kTealLight.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                            color: _kTealLight.withOpacity(0.45), width: 1.2),
-                      ),
-                      child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                                color: _kTealLight, shape: BoxShape.circle)),
-                        const SizedBox(width: 8),
-                        Text('ABOUT US',
-                            style: GoogleFonts.nunito(
-                                color: _kTealLight,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 3.5)),
-                      ]),
+        // Text
+        Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 24 : 80),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              FadeTransition(
+                opacity: _badgeFade,
+                child: SlideTransition(
+                  position: _badgeSlide,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 22, vertical: 9),
+                    decoration: BoxDecoration(
+                      color: _kTealLight.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                          color: _kTealLight.withOpacity(0.45), width: 1.2),
                     ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                              color: _kTealLight, shape: BoxShape.circle)),
+                      const SizedBox(width: 8),
+                      Text('ABOUT US',
+                          style: GoogleFonts.nunito(
+                              color: _kTealLight,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 3.5)),
+                    ]),
                   ),
                 ),
-                const SizedBox(height: 28),
-                FadeTransition(
-                  opacity: _titleFade,
-                  child: SlideTransition(
-                    position: _titleSlide,
-                    child: RichText(
+              ),
+              const SizedBox(height: 28),
+              FadeTransition(
+                opacity: _titleFade,
+                child: SlideTransition(
+                  position: _titleSlide,
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: 'Expert Care,\n',
+                          style: GoogleFonts.playfairDisplay(
+                              color: Colors.white,
+                              fontSize: isMobile ? 40 : 62,
+                              fontWeight: FontWeight.w700,
+                              height: 1.12)),
+                      TextSpan(
+                          text: 'Personalised for You.',
+                          style: GoogleFonts.playfairDisplay(
+                              color: _kTealLight,
+                              fontSize: isMobile ? 40 : 62,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.italic,
+                              height: 1.12)),
+                    ]),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+              FadeTransition(
+                opacity: _subFade,
+                child: Column(children: [
+                  Text("Dr. Ravinder's Dental & Skin Aesthetic Clinic",
                       textAlign: TextAlign.center,
-                      text: TextSpan(children: [
-                        TextSpan(
-                            text: 'Expert Care,\n',
-                            style: GoogleFonts.playfairDisplay(
-                                color: Colors.white,
-                                fontSize: isMobile ? 40 : 62,
-                                fontWeight: FontWeight.w700,
-                                height: 1.12)),
-                        TextSpan(
-                            text: 'Personalised for You.',
-                            style: GoogleFonts.playfairDisplay(
-                                color: _kTealLight,
-                                fontSize: isMobile ? 40 : 62,
-                                fontWeight: FontWeight.w700,
-                                fontStyle: FontStyle.italic,
-                                height: 1.12)),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 22),
-                FadeTransition(
-                  opacity: _subFade,
-                  child: Column(children: [
-                    Text("Dr. Ravinder's Dental & Skin Aesthetic Clinic",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.nunito(
-                            color: Colors.white70,
-                            fontSize: isMobile ? 14 : 17,
-                            height: 1.6,
-                            fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 4),
-                    Text('Kartarpur, Punjab',
-                        style: GoogleFonts.nunito(
-                            color: _kTealLight.withOpacity(0.7),
-                            fontSize: isMobile ? 12 : 14,
-                            letterSpacing: 1.2)),
-                  ]),
-                ),
-                const SizedBox(height: 40),
-                FadeTransition(
-                  opacity: _subFade,
-                  child: Column(children: [
-                    Text('scroll',
-                        style: GoogleFonts.nunito(
-                            color: Colors.white30,
-                            fontSize: 10,
-                            letterSpacing: 2)),
-                    const SizedBox(height: 6),
-                    _ScrollCue(),
-                  ]),
-                ),
-              ]),
-            ),
+                      style: GoogleFonts.nunito(
+                          color: Colors.white70,
+                          fontSize: isMobile ? 14 : 17,
+                          height: 1.6,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Text('Kartarpur, Punjab',
+                      style: GoogleFonts.nunito(
+                          color: _kTealLight.withOpacity(0.7),
+                          fontSize: isMobile ? 12 : 14,
+                          letterSpacing: 1.2)),
+                ]),
+              ),
+              const SizedBox(height: 40),
+              FadeTransition(
+                opacity: _subFade,
+                child: Column(children: [
+                  Text('scroll',
+                      style: GoogleFonts.nunito(
+                          color: Colors.white30,
+                          fontSize: 10,
+                          letterSpacing: 2)),
+                  const SizedBox(height: 6),
+                  _ScrollCue(),
+                ]),
+              ),
+            ]),
           ),
+        ),
       ]),
     );
   }
@@ -1154,6 +1153,253 @@ class _Tilt3DStatCardState extends State<_Tilt3DStatCard> {
       ),
     );
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  6 · BEFORE & AFTER
+// ═══════════════════════════════════════════════════════════════════
+class _BeforeAfterSection extends StatelessWidget {
+  const _BeforeAfterSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 700;
+    return _RevealOnScroll(
+      child: Container(
+        width: double.infinity,
+        padding:
+            EdgeInsets.symmetric(vertical: 90, horizontal: isMobile ? 24 : 80),
+        color: _kIvory,
+        child: Column(children: [
+          const _SectionBadge(label: 'REAL RESULTS'),
+          const SizedBox(height: 18),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(children: [
+              TextSpan(
+                  text: 'Before & ',
+                  style: GoogleFonts.playfairDisplay(
+                      color: _kHeading,
+                      fontSize: isMobile ? 30 : 44,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2)),
+              TextSpan(
+                  text: 'After',
+                  style: GoogleFonts.playfairDisplay(
+                      color: _kTeal,
+                      fontSize: isMobile ? 30 : 44,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.italic,
+                      height: 1.2)),
+            ]),
+          ),
+          const SizedBox(height: 10),
+          Text('Real patients. Real results. Right here in Kartarpur.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(color: _kLight, fontSize: 14)),
+          const SizedBox(height: 56),
+
+          // ── Cards ──
+          isMobile
+              ? Column(children: const [
+                  _BeforeAfterCard(
+                    imagePath: 'assets/images/wrinkle_img.jpeg',
+                    label: 'Wrinkle Treatment',
+                    description:
+                        'Visible reduction in fine lines & wrinkles after treatment.',
+                  ),
+                  SizedBox(height: 24),
+                  _BeforeAfterCard(
+                    imagePath: 'assets/images/hair_img.jpeg',
+                    label: 'Hair Treatment',
+                    description:
+                        'Significant hair regrowth and scalp improvement.',
+                  ),
+                ])
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    _BeforeAfterCard(
+                      imagePath: 'assets/images/wrinkle_img.jpeg',
+                      label: 'Wrinkle Treatment',
+                      description:
+                          'Visible reduction in fine lines & wrinkles after treatment.',
+                    ),
+                    SizedBox(width: 28),
+                    _BeforeAfterCard(
+                      imagePath: 'assets/images/hair_img.jpeg',
+                      label: 'Hair Treatment',
+                      description:
+                          'Significant hair regrowth and scalp improvement.',
+                    ),
+                  ],
+                ),
+        ]),
+      ),
+    );
+  }
+}
+
+class _BeforeAfterCard extends StatefulWidget {
+  final String imagePath;
+  final String label;
+  final String description;
+  const _BeforeAfterCard({
+    required this.imagePath,
+    required this.label,
+    required this.description,
+  });
+  @override
+  State<_BeforeAfterCard> createState() => _BeforeAfterCardState();
+}
+
+class _BeforeAfterCardState extends State<_BeforeAfterCard> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 700;
+    final cardW = isMobile ? MediaQuery.of(context).size.width - 48.0 : 420.0;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        transform: Matrix4.identity()..translate(0.0, _hovered ? -8.0 : 0.0),
+        width: cardW,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+                color: _kDark.withOpacity(_hovered ? 0.18 : 0.08),
+                blurRadius: _hovered ? 40 : 20,
+                offset: const Offset(0, 10)),
+            if (_hovered)
+              BoxShadow(
+                  color: _kTeal.withOpacity(0.12),
+                  blurRadius: 60,
+                  offset: const Offset(0, 20)),
+          ],
+          border: Border.all(
+              color: _hovered ? _kTeal.withOpacity(0.35) : Colors.transparent),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Image ──
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+              child: Stack(children: [
+                Image.asset(
+                  widget.imagePath,
+                  height: 280,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                      height: 280,
+                      color: _kTealLight.withOpacity(0.1),
+                      child:
+                          Icon(Icons.image_rounded, size: 60, color: _kTeal)),
+                ),
+                // Before / After label badges
+                Positioned(
+                  top: 16,
+                  left: 16,
+                  child: _BadgeLabel(text: 'BEFORE', color: Colors.black87),
+                ),
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: _BadgeLabel(text: 'AFTER', color: _kTeal),
+                ),
+                // Bottom gradient
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 80,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.35)
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
+            ),
+
+            // ── Text content ──
+            Padding(
+              padding: const EdgeInsets.all(22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.label,
+                      style: GoogleFonts.playfairDisplay(
+                          color: _kHeading,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 8),
+                  Text(widget.description,
+                      style: GoogleFonts.nunito(
+                          color: _kLight, fontSize: 13, height: 1.6)),
+                  const SizedBox(height: 16),
+                  Row(children: [
+                    Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                            color: _kTeal, shape: BoxShape.circle)),
+                    const SizedBox(width: 8),
+                    Text('Treated at Dr. Ravinder\'s Clinic',
+                        style: GoogleFonts.nunito(
+                            color: _kTeal,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700)),
+                  ]),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BadgeLabel extends StatelessWidget {
+  final String text;
+  final Color color;
+  const _BadgeLabel({required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.92),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.12),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
+      child: Text(text,
+          style: GoogleFonts.nunito(
+              color: color,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5)));
 }
 
 // ═══════════════════════════════════════════════════════════════════

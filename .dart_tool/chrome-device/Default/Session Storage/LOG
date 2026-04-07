@@ -1,3 +1,15 @@
-2026/04/05-23:19:16.005 3a64 Reusing MANIFEST C:\Users\HP\AppData\Local\Temp\flutter_tools.a958310f\flutter_tools_chrome_device.d3999dfd\Default\Session Storage/MANIFEST-000001
-2026/04/05-23:19:16.006 3a64 Recovering log #3
-2026/04/05-23:19:16.009 3a64 Reusing old log C:\Users\HP\AppData\Local\Temp\flutter_tools.a958310f\flutter_tools_chrome_device.d3999dfd\Default\Session Storage/000003.log 
+2026/04/07-20:30:38.549 3590 Reusing MANIFEST C:\Users\HP\AppData\Local\Temp\flutter_tools.f7393466\flutter_tools_chrome_device.2f2d38fc\Default\Session Storage/MANIFEST-000001
+2026/04/07-20:30:38.551 3590 Recovering log #3
+2026/04/07-20:30:38.560 3590 Reusing old log C:\Users\HP\AppData\Local\Temp\flutter_tools.f7393466\flutter_tools_chrome_device.2f2d38fc\Default\Session Storage/000003.log 
+2026/04/07-20:33:05.350 39d4 Level-0 table #5: started
+2026/04/07-20:33:05.359 39d4 Level-0 table #5: 97203 bytes OK
+2026/04/07-20:33:05.365 39d4 Delete type=0 #3
+2026/04/07-20:35:36.284 39d4 Level-0 table #7: started
+2026/04/07-20:35:36.289 39d4 Level-0 table #7: 49649 bytes OK
+2026/04/07-20:35:36.291 39d4 Delete type=0 #4
+2026/04/07-20:37:37.032 39d4 Level-0 table #9: started
+2026/04/07-20:37:37.041 39d4 Level-0 table #9: 138465 bytes OK
+2026/04/07-20:37:37.043 39d4 Delete type=0 #6
+2026/04/07-20:47:08.931 39d4 Level-0 table #11: started
+2026/04/07-20:47:08.943 39d4 Level-0 table #11: 50021 bytes OK
+2026/04/07-20:47:08.947 39d4 Delete type=0 #8
