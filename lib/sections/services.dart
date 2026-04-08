@@ -199,69 +199,73 @@ class _ServicesPageState extends State<ServicesPage>
           // Content
           Padding(
             padding: EdgeInsets.fromLTRB(hPad, kNavBarHeight + 36, hPad, 36),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Tag pill
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _kTeal.withOpacity(0.22),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _kTealLight.withOpacity(0.5)),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Tag pill
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _kTeal.withOpacity(0.22),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: _kTealLight.withOpacity(0.5)),
+                    ),
+                    child: Text('WHAT WE OFFER',
+                        style: GoogleFonts.nunito(
+                            color: _kTealLight,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.8)),
                   ),
-                  child: Text('WHAT WE OFFER',
+                  SizedBox(height: isWide ? 20 : 14),
+                  // Heading
+                  RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                        text: 'Our ',
+                        style: GoogleFonts.dmSerifDisplay(
+                            fontSize: isWide ? 62 : (w > 600 ? 46 : 34),
+                            color: Colors.white),
+                      ),
+                      TextSpan(
+                        text: 'Services',
+                        style: GoogleFonts.dmSerifDisplay(
+                            fontSize: isWide ? 62 : (w > 600 ? 46 : 34),
+                            color: _kTealLight,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    ]),
+                  ),
+                  SizedBox(height: isWide ? 16 : 12),
+                  // Subtitle
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    child: Text(
+                      "From a sparkling smile to radiant skin — Dr. Ravinder's Dental & Skin Aesthetic Clinic offers premium dental and dermatology care at every step of your journey.",
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.nunito(
-                          color: _kTealLight,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.8)),
-                ),
-                SizedBox(height: isWide ? 20 : 14),
-                // Heading
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                      text: 'Our ',
-                      style: GoogleFonts.dmSerifDisplay(
-                          fontSize: isWide ? 62 : (w > 600 ? 46 : 34),
-                          color: Colors.white),
+                          color: Colors.white.withOpacity(0.78),
+                          fontSize: isWide ? 15 : 12.5,
+                          height: 1.75),
                     ),
-                    TextSpan(
-                      text: 'Services',
-                      style: GoogleFonts.dmSerifDisplay(
-                          fontSize: isWide ? 62 : (w > 600 ? 46 : 34),
-                          color: _kTealLight,
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ]),
-                ),
-                SizedBox(height: isWide ? 16 : 12),
-                // Subtitle
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 520),
-                  child: Text(
-                    "From a sparkling smile to radiant skin — Dr. Ravinder's Glowora Clinic offers premium dental and dermatology care at every step of your journey.",
-                    style: GoogleFonts.nunito(
-                        color: Colors.white.withOpacity(0.78),
-                        fontSize: isWide ? 15 : 12.5,
-                        height: 1.75),
                   ),
-                ),
-                SizedBox(height: isWide ? 34 : 22),
-                // Stats
-                Wrap(
-                  spacing: isWide ? 48 : 28,
-                  runSpacing: 14,
-                  children: const [
-                    _HeroStat(value: '12+', label: 'Dental Treatments'),
-                    _HeroStat(value: '8+', label: 'Skin Therapies'),
-                    _HeroStat(value: '5000+', label: 'Happy Patients'),
-                  ],
-                ),
-              ],
+                  SizedBox(height: isWide ? 34 : 22),
+                  // Stats
+                  Wrap(
+                    spacing: isWide ? 48 : 28,
+                    runSpacing: 14,
+                    alignment: WrapAlignment.center,
+                    children: const [
+                      _HeroStat(value: '12+', label: 'Dental Treatments'),
+                      _HeroStat(value: '8+', label: 'Skin Therapies'),
+                      _HeroStat(value: '5000+', label: 'Happy Patients'),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

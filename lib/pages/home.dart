@@ -422,6 +422,7 @@ class _QuickBookBarState extends State<_QuickBookBar> {
                 Matrix4.translationValues(0, _hovered ? -38.0 : -36.0, 0),
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
             decoration: BoxDecoration(
+              // Glassmorphism effect
               color: Colors.white.withOpacity(0.92),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
@@ -487,7 +488,6 @@ class _QuickBookBarState extends State<_QuickBookBar> {
     );
   }
 
-  // ✅ ONLY FIX APPLIED HERE (NO DESIGN CHANGE)
   Widget _bookField(String title, String value, IconData icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -513,16 +513,12 @@ class _QuickBookBarState extends State<_QuickBookBar> {
                 child: Icon(icon, size: 15, color: _kDark),
               ),
               const SizedBox(width: 10),
-
-              // 🔥 FIX (Flexible → Expanded + ellipsis)
-              Expanded(
-                child: Text(
-                  value,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w700, color: _kDark, fontSize: 13),
-                ),
+              Flexible(
+                child: Text(value,
+                    style: GoogleFonts.nunito(
+                        fontWeight: FontWeight.w700,
+                        color: _kDark,
+                        fontSize: 13)),
               ),
             ],
           ),

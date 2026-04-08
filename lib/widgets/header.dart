@@ -273,7 +273,7 @@ class _Logo extends StatelessWidget {
                     color: Colors.white,
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w600)),
-            Text('GLOWORA CLINIC',
+            Text('DENTAL & SKIN AESTHETIC CLINIC',
                 style: GoogleFonts.nunito(
                     fontSize: 9,
                     color: kSoftRose,

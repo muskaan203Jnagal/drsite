@@ -14,6 +14,7 @@ import '../widgets/header.dart';
 import '../services/firestore_service.dart';
 import '../services/notification_service.dart';
 import '../models/contact_model.dart';
+import 'package:flutter/services.dart';
 
 const Color kTeal = Color(0xFF0D9E8C);
 
@@ -120,7 +121,7 @@ class _ContactPageState extends State<ContactPage>
         if (mounted) {
           setState(() => _loading = false);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Message send nahi hua. Dobara try karo.',
+            content: Text('Failed to send message. Please try again.',
                 style: GoogleFonts.nunito()),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
@@ -245,6 +246,7 @@ class _ContactPageState extends State<ContactPage>
       ),
       child: Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.disabled,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Send a Message',
               style: GoogleFonts.playfairDisplay(
@@ -253,35 +255,81 @@ class _ContactPageState extends State<ContactPage>
           if (isWide)
             Row(children: [
               Expanded(
-                  child: _field(
-                      ctrl: _nameCtrl,
-                      label: 'Full Name',
-                      icon: Icons.person_outline_rounded,
-                      validator: (v) =>
-                          v!.trim().isEmpty ? 'Naam daalo' : null)),
+                child: _field(
+                  ctrl: _nameCtrl,
+                  label: 'Full Name',
+                  icon: Icons.person_outline_rounded,
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Please enter your full name';
+                    }
+                    if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(v)) {
+                      return 'Name should contain only letters';
+                    }
+                    return null;
+                  },
+                ),
+              ),
               const SizedBox(width: 16),
               Expanded(
                   child: _field(
                       ctrl: _phoneCtrl,
                       label: 'Phone Number',
                       icon: Icons.phone_outlined,
-                      keyboard: TextInputType.phone,
-                      validator: (v) =>
-                          v!.length < 10 ? 'Sahi number daalo' : null)),
+                      keyboard: TextInputType.number,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Please enter your phone number';
+                        }
+                        if (!RegExp(r'^[0-9]+$').hasMatch(v)) {
+                          return 'Only numbers are allowed';
+                        }
+                        if (v.length != 10) {
+                          return 'Phone number must be exactly 10 digits';
+                        }
+                        return null;
+                      })),
             ])
           else ...[
             _field(
-                ctrl: _nameCtrl,
-                label: 'Full Name',
-                icon: Icons.person_outline_rounded,
-                validator: (v) => v!.trim().isEmpty ? 'Naam daalo' : null),
+              ctrl: _nameCtrl,
+              label: 'Full Name',
+              icon: Icons.person_outline_rounded,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
+              ],
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) {
+                  return 'Please enter your full name';
+                }
+                if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(v)) {
+                  return 'Name should contain only letters';
+                }
+                return null;
+              },
+            ),
             const SizedBox(height: 14),
             _field(
                 ctrl: _phoneCtrl,
                 label: 'Phone Number',
                 icon: Icons.phone_outlined,
-                keyboard: TextInputType.phone,
-                validator: (v) => v!.length < 10 ? 'Sahi number daalo' : null),
+                keyboard: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
+                validator: (v) {
+                  if (v == null || v.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(v)) {
+                    return 'Only numbers are allowed';
+                  }
+                  if (v.length != 10) {
+                    return 'Phone number must be exactly 10 digits';
+                  }
+                  return null;
+                }),
           ],
           const SizedBox(height: 14),
           _field(
@@ -289,9 +337,15 @@ class _ContactPageState extends State<ContactPage>
               label: 'Email Address',
               icon: Icons.email_outlined,
               keyboard: TextInputType.emailAddress,
-              validator: (v) => (!v!.contains('@') || !v.contains('.'))
-                  ? 'Valid email daalo'
-                  : null),
+              validator: (v) {
+                if (v == null || v.isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
+                  return 'Please enter a valid email address';
+                }
+                return null;
+              }),
           const SizedBox(height: 14),
           _buildServiceDropdown(),
           const SizedBox(height: 14),
@@ -369,13 +423,9 @@ class _ContactPageState extends State<ContactPage>
       _InfoCard(
         icon: Icons.location_on_rounded,
         title: 'Visit Us',
-        lines: [
-          'Opp. Vaishno Devi Mandir,',
-          'Gangsar Bazar, Kartarpur,',
-          'Punjab 144001'
-        ],
+        lines: ['Kartarpur, Jalandhar,', 'Punjab, India 144801'],
         onTap: () => _launch(
-            "https://www.google.com/maps/search/Opp+Vaishno+Devi+Mandir+Gangsar+Bazar+Kartarpur"),
+            "https://www.google.com/maps/search/Kartarpur+Jalandhar+Punjab"),
       ),
       const SizedBox(height: 20),
       _InfoCard(
@@ -432,8 +482,15 @@ class _ContactPageState extends State<ContactPage>
           maxLines: 4,
           maxLength: 400,
           style: GoogleFonts.nunito(color: _kDark, fontSize: 14),
-          validator: (v) =>
-              v!.trim().isEmpty ? 'Message likhna zaroori hai' : null,
+          validator: (v) {
+            if (v == null || v.trim().isEmpty) {
+              return 'Message is required';
+            }
+            if (v.length < 10) {
+              return 'Message must be at least 10 characters';
+            }
+            return null;
+          },
           decoration: InputDecoration(
             labelText: 'Your Message',
             labelStyle: GoogleFonts.nunito(fontSize: 13, color: Colors.black38),
@@ -473,11 +530,13 @@ class _ContactPageState extends State<ContactPage>
     required IconData icon,
     TextInputType? keyboard,
     String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters, // 👈 ADD THIS LINE
   }) {
     return TextFormField(
       controller: ctrl,
       keyboardType: keyboard,
       validator: validator,
+      inputFormatters: inputFormatters,
       style: GoogleFonts.nunito(color: _kDark, fontSize: 14),
       decoration: InputDecoration(
         labelText: label,

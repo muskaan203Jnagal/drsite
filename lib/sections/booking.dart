@@ -122,7 +122,6 @@ const Color _kCard = Color(0xFFFFFFFF);
 
 // ── Data ──────────────────────────────────────────────────────────
 const _kCategories = ['Dental', 'Dermatology'];
-
 const _kServices = {
   'Dental': [
     'Dental Consultation',
@@ -261,10 +260,10 @@ class _BookingPageState extends State<BookingPage>
       if (mounted) {
         setState(() {
           _submitting = false;
-          _submitError = 'Kuch error hua. Please dobara try karo.';
+          _submitError = 'Something went wrong. Please try again.';
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Booking save nahi hui. Dobara try karo.',
+          content: Text('Booking could not be saved. Please try again.',
               style: GoogleFonts.nunito()),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
@@ -479,6 +478,7 @@ class _BookingPageState extends State<BookingPage>
   Widget _buildDetailsStep(bool isWide) {
     return Form(
       key: _formKey,
+      autovalidateMode: AutovalidateMode.disabled,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _AppointmentSummaryBanner(
           service: _service!,
@@ -491,35 +491,59 @@ class _BookingPageState extends State<BookingPage>
         if (isWide)
           Row(children: [
             Expanded(
-                child: _FormField(
-                    label: 'Full Name',
-                    icon: Icons.person_outline_rounded,
-                    controller: _nameCtrl,
-                    validator: (v) => v!.trim().isEmpty ? 'Naam daalo' : null)),
+              child: _FormField(
+                  label: 'Full Name',
+                  icon: Icons.person_outline_rounded,
+                  controller: _nameCtrl,
+                  validator: (v) {
+                    if (v!.trim().isEmpty) return 'Please enter your name';
+                    if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(v))
+                      return 'Only letters allowed';
+                    return null;
+                  }),
+            ),
             const SizedBox(width: 16),
             Expanded(
-                child: _FormField(
-                    label: 'Phone Number',
-                    icon: Icons.phone_outlined,
-                    controller: _phoneCtrl,
-                    keyboard: TextInputType.phone,
-                    validator: (v) =>
-                        v!.length < 10 ? 'Sahi phone number daalo' : null)),
+              child: _FormField(
+                  label: 'Phone Number',
+                  icon: Icons.phone_outlined,
+                  controller: _phoneCtrl,
+                  keyboard: TextInputType.phone,
+                  validator: (v) {
+                    if (v!.isEmpty) return 'Please enter your phone number';
+                    if (!RegExp(r'^[0-9]+$').hasMatch(v))
+                      return 'Only numbers are allowed';
+                    if (v.length != 10) return 'Enter a valid 10-digit number';
+                    return null;
+                  }),
+            ),
           ])
         else ...[
           _FormField(
-              label: 'Full Name',
-              icon: Icons.person_outline_rounded,
-              controller: _nameCtrl,
-              validator: (v) => v!.trim().isEmpty ? 'Naam daalo' : null),
+            label: 'Full Name',
+            icon: Icons.person_outline_rounded,
+            controller: _nameCtrl,
+            validator: (v) {
+              if (v!.trim().isEmpty) return 'Please enter your name';
+              if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(v))
+                return 'Only letters allowed';
+              return null;
+            },
+          ),
           const SizedBox(height: 14),
           _FormField(
-              label: 'Phone Number',
-              icon: Icons.phone_outlined,
-              controller: _phoneCtrl,
-              keyboard: TextInputType.phone,
-              validator: (v) =>
-                  v!.length < 10 ? 'Sahi phone number daalo' : null),
+            label: 'Phone Number',
+            icon: Icons.phone_outlined,
+            controller: _phoneCtrl,
+            keyboard: TextInputType.phone,
+            validator: (v) {
+              if (v!.isEmpty) return 'Please enter your phone number';
+              if (!RegExp(r'^[0-9]+$').hasMatch(v))
+                return 'Only numbers are allowed';
+              if (v.length != 10) return 'Enter a valid 10-digit number';
+              return null;
+            },
+          ),
         ],
         const SizedBox(height: 14),
         _FormField(
