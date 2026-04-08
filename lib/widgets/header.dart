@@ -14,7 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 // ── Shared color constants (used by footer & pages) ───────────────
 const Color kTeal = Color(0xFF0D9E8C); // back-compat alias
-const Color kDeepBlue = Color(0xFF0A2E2A);
+const Color kDeepBlue = Color.fromARGB(255, 9, 39, 35);
 const Color kSoftRose = Color(0xFF5EEAD4);
 const Color kGoldAccent = Color(0xFF0D9E8C);
 const Color kDark = Color(0xFF0A2E2A);
@@ -60,6 +60,7 @@ class _NavBarState extends State<NavBar> {
     showModalBottomSheet(
       context: context,
       backgroundColor: kDeepBlue,
+      isScrollControlled: true, // ← lets content define its own height
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -147,52 +148,55 @@ class _MobileMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-            width: 44,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 28),
-            decoration: BoxDecoration(
-                color: Colors.white24, borderRadius: BorderRadius.circular(2))),
-        const Align(alignment: Alignment.centerLeft, child: _Logo()),
-        const SizedBox(height: 28),
-        Divider(color: kSoftRose.withOpacity(0.2)),
-        const SizedBox(height: 8),
-        for (final item in _kNavItems)
-          _MobileNavItem(
-            label: item.$1,
-            route: item.$2,
-            isActive: currentRoute == item.$2,
-            onTap: () {
-              Navigator.pop(context);
-              context.go(item.$2);
-            },
-          ),
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.go('/booking');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kSoftRose,
-              foregroundColor: kDeepBlue,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              elevation: 0,
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+              width: 44,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 28),
+              decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2))),
+          const Align(alignment: Alignment.centerLeft, child: _Logo()),
+          const SizedBox(height: 28),
+          Divider(color: kSoftRose.withOpacity(0.2)),
+          const SizedBox(height: 8),
+          for (final item in _kNavItems)
+            _MobileNavItem(
+              label: item.$1,
+              route: item.$2,
+              isActive: currentRoute == item.$2,
+              onTap: () {
+                Navigator.pop(context);
+                context.go(item.$2);
+              },
             ),
-            child: Text('Book Appointment',
-                style: GoogleFonts.nunito(
-                    fontSize: 15, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                context.go('/booking');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kSoftRose,
+                foregroundColor: kDeepBlue,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+              ),
+              child: Text('Book Appointment',
+                  style: GoogleFonts.nunito(
+                      fontSize: 15, fontWeight: FontWeight.w700)),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-      ]),
+          const SizedBox(height: 8),
+        ]),
+      ),
     );
   }
 }

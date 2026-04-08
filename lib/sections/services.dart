@@ -1,6 +1,9 @@
 // ================================================================
-//  sections/services.dart  —  Premium Light Theme
-//  DNA-style: Full bg image behind grid, hover → solid teal overlay
+//  sections/services.dart
+//  Hero: herosection.jpg + kDeepBlue transparent overlay
+//  Grid: full-bg image, hover → teal overlay + desc
+//  Responsive: 1col(mobile) / 2col(tablet) / 3col(desktop)
+//  Scroll: BouncingScrollPhysics — smooth on mouse + touch
 // ================================================================
 
 import 'package:flutter/material.dart';
@@ -8,15 +11,12 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/header.dart';
 
-// ── Palette ───────────────────────────────────────────────────────
-const Color _kDark = Color(0xFF0A2E2A);
+const Color _kDark = Color(0xFF092723);
 const Color _kTealLight = Color(0xFF5EEAD4);
 const Color _kTeal = Color(0xFF0D9E8C);
 const Color _kIvory = Color(0xFFF0FDFA);
-const Color _kCard = Color(0xFFFFFFFF);
-const Color _kOverlay = Color(0xFF0D9E8C); // solid teal fill on hover
+const Color _kOverlay = Color(0xFF0D9E8C);
 
-// ── Service data ──────────────────────────────────────────────────
 class _ServiceItem {
   final IconData icon;
   final String title;
@@ -54,9 +54,6 @@ const _kDerm = [
       'Personalised skin analysis and tailored treatment planning with Dr. Ravinder.'),
 ];
 
-// ════════════════════════════════════════════════════════════════
-//  Page
-// ════════════════════════════════════════════════════════════════
 class ServicesPage extends StatefulWidget {
   const ServicesPage({super.key});
   @override
@@ -66,18 +63,20 @@ class ServicesPage extends StatefulWidget {
 class _ServicesPageState extends State<ServicesPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
+  final ScrollController _scrollCtrl = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1100))
+        vsync: this, duration: const Duration(milliseconds: 1000))
       ..forward();
   }
 
   @override
   void dispose() {
     _ctrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -86,33 +85,39 @@ class _ServicesPageState extends State<ServicesPage>
           parent: _ctrl, curve: Interval(from, to, curve: Curves.easeOut)));
 
   Animation<Offset> _slideUp(double from, double to) =>
-      Tween<Offset>(begin: const Offset(0, 0.14), end: Offset.zero).animate(
+      Tween<Offset>(begin: const Offset(0, 0.10), end: Offset.zero).animate(
           CurvedAnimation(
               parent: _ctrl, curve: Interval(from, to, curve: Curves.easeOut)));
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final isWide = width > 900;
+    final w = MediaQuery.of(context).size.width;
+    final isWide = w > 900;
+    final hPad = isWide ? 80.0 : (w > 600 ? 40.0 : 20.0);
 
     return Container(
       color: _kIvory,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(top: kNavBarHeight),
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
+          scrollbars: false,
+        ),
+        child: SingleChildScrollView(
+          controller: _scrollCtrl,
           child: Column(
             children: [
               FadeTransition(
-                opacity: _fade(0.0, 0.40),
+                opacity: _fade(0.0, 0.35),
                 child: SlideTransition(
-                  position: _slideUp(0.0, 0.40),
-                  child: _buildHero(isWide),
+                  position: _slideUp(0.0, 0.35),
+                  child: _buildHero(w, isWide, hPad),
                 ),
               ),
               FadeTransition(
-                opacity: _fade(0.2, 0.60),
+                opacity: _fade(0.2, 0.55),
                 child: SlideTransition(
-                  position: _slideUp(0.2, 0.60),
+                  position: _slideUp(0.2, 0.55),
                   child: _buildSection(
                     context: context,
                     tag: 'DENTAL CARE',
@@ -122,20 +127,21 @@ class _ServicesPageState extends State<ServicesPage>
                         'Complete dental care from routine check-ups to advanced cosmetic treatments — all under one roof.',
                     items: _kDental,
                     bgImage: 'assets/images/dentist_service.jpg',
+                    w: w,
                     isWide: isWide,
+                    hPad: hPad,
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: isWide ? 80 : 24),
+                padding: EdgeInsets.symmetric(horizontal: hPad),
                 child:
-                    Divider(color: _kTealLight.withOpacity(0.45), thickness: 1),
+                    Divider(color: _kTealLight.withOpacity(0.4), thickness: 1),
               ),
-              const SizedBox(height: 8),
               FadeTransition(
-                opacity: _fade(0.4, 0.80),
+                opacity: _fade(0.4, 0.75),
                 child: SlideTransition(
-                  position: _slideUp(0.4, 0.80),
+                  position: _slideUp(0.4, 0.75),
                   child: _buildSection(
                     context: context,
                     tag: 'SKIN & HAIR',
@@ -145,7 +151,9 @@ class _ServicesPageState extends State<ServicesPage>
                         'Expert skin, hair and laser treatments tailored to your unique skin type and beauty goals.',
                     items: _kDerm,
                     bgImage: 'assets/images/derma_service.jpg',
+                    w: w,
                     isWide: isWide,
+                    hPad: hPad,
                   ),
                 ),
               ),
@@ -153,7 +161,7 @@ class _ServicesPageState extends State<ServicesPage>
                 opacity: _fade(0.6, 1.0),
                 child: SlideTransition(
                   position: _slideUp(0.6, 1.0),
-                  child: _buildCTA(context, isWide),
+                  child: _buildCTA(context, isWide, hPad),
                 ),
               ),
               const SizedBox(height: 80),
@@ -164,76 +172,104 @@ class _ServicesPageState extends State<ServicesPage>
     );
   }
 
-  // ── HERO ──────────────────────────────────────────────────────
-  Widget _buildHero(bool isWide) {
-    return Container(
+  // ── HERO ─────────────────────────────────────────────────────
+  Widget _buildHero(double w, bool isWide, double hPad) {
+    final heroH = isWide ? 480.0 : (w > 600 ? 400.0 : 320.0);
+
+    return SizedBox(
       width: double.infinity,
-      color: _kCard,
-      padding: EdgeInsets.symmetric(
-          horizontal: isWide ? 80 : 24, vertical: isWide ? 80 : 56),
-      child: Column(
+      height: heroH + kNavBarHeight,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
+          Image.asset('assets/images/herosection.jpg', fit: BoxFit.cover),
+          // kDeepBlue gradient overlay — left darker, right lighter
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: _kTeal.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _kTeal.withOpacity(0.4)),
-            ),
-            child: Text('WHAT WE OFFER',
-                style: GoogleFonts.nunito(
-                    color: _kTeal,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.8)),
-          ),
-          const SizedBox(height: 28),
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(children: [
-              TextSpan(
-                text: 'Our ',
-                style: GoogleFonts.dmSerifDisplay(
-                    fontSize: isWide ? 64 : 42, color: _kDark),
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  _kDark.withOpacity(0.85),
+                  _kDark.withOpacity(0.50),
+                ],
               ),
-              TextSpan(
-                text: 'Services',
-                style: GoogleFonts.dmSerifDisplay(
-                    fontSize: isWide ? 64 : 42,
-                    color: _kTealLight,
-                    fontStyle: FontStyle.italic),
-              ),
-            ]),
-          ),
-          const SizedBox(height: 20),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: Text(
-              "From a sparkling smile to radiant skin — Dr. Ravinder's Glowora Clinic offers premium dental and dermatology care at every step of your journey.",
-              style: GoogleFonts.nunito(
-                  color: _kDark.withOpacity(0.55),
-                  fontSize: isWide ? 16 : 14,
-                  height: 1.75),
-              textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 52),
-          Wrap(
-            spacing: isWide ? 64 : 32,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: const [
-              _StatChip(value: '12+', label: 'Dental Treatments'),
-              _StatChip(value: '8+', label: 'Skin Therapies'),
-              _StatChip(value: '5000+', label: 'Happy Patients'),
-            ],
+          // Content
+          Padding(
+            padding: EdgeInsets.fromLTRB(hPad, kNavBarHeight + 36, hPad, 36),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Tag pill
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _kTeal.withOpacity(0.22),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: _kTealLight.withOpacity(0.5)),
+                  ),
+                  child: Text('WHAT WE OFFER',
+                      style: GoogleFonts.nunito(
+                          color: _kTealLight,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.8)),
+                ),
+                SizedBox(height: isWide ? 20 : 14),
+                // Heading
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                      text: 'Our ',
+                      style: GoogleFonts.dmSerifDisplay(
+                          fontSize: isWide ? 62 : (w > 600 ? 46 : 34),
+                          color: Colors.white),
+                    ),
+                    TextSpan(
+                      text: 'Services',
+                      style: GoogleFonts.dmSerifDisplay(
+                          fontSize: isWide ? 62 : (w > 600 ? 46 : 34),
+                          color: _kTealLight,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  ]),
+                ),
+                SizedBox(height: isWide ? 16 : 12),
+                // Subtitle
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Text(
+                    "From a sparkling smile to radiant skin — Dr. Ravinder's Glowora Clinic offers premium dental and dermatology care at every step of your journey.",
+                    style: GoogleFonts.nunito(
+                        color: Colors.white.withOpacity(0.78),
+                        fontSize: isWide ? 15 : 12.5,
+                        height: 1.75),
+                  ),
+                ),
+                SizedBox(height: isWide ? 34 : 22),
+                // Stats
+                Wrap(
+                  spacing: isWide ? 48 : 28,
+                  runSpacing: 14,
+                  children: const [
+                    _HeroStat(value: '12+', label: 'Dental Treatments'),
+                    _HeroStat(value: '8+', label: 'Skin Therapies'),
+                    _HeroStat(value: '5000+', label: 'Happy Patients'),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  // ── SERVICE SECTION ──────────────────────────────────────────
+  // ── SECTION ──────────────────────────────────────────────────
   Widget _buildSection({
     required BuildContext context,
     required String tag,
@@ -242,18 +278,20 @@ class _ServicesPageState extends State<ServicesPage>
     required String subtitle,
     required List<_ServiceItem> items,
     required String bgImage,
+    required double w,
     required bool isWide,
+    required double hPad,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: isWide ? 80 : 24, vertical: isWide ? 64 : 44),
+      padding:
+          EdgeInsets.symmetric(horizontal: hPad, vertical: isWide ? 60 : 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
-              color: _kTealLight.withOpacity(0.2),
+              color: _kTealLight.withOpacity(0.18),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(tag,
@@ -263,104 +301,96 @@ class _ServicesPageState extends State<ServicesPage>
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.6)),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           RichText(
             text: TextSpan(children: [
               TextSpan(
                 text: '$title ',
                 style: GoogleFonts.dmSerifDisplay(
-                    fontSize: isWide ? 42 : 30, color: _kDark),
+                    fontSize: isWide ? 40 : (w > 600 ? 30 : 26), color: _kDark),
               ),
               TextSpan(
                 text: accent,
                 style: GoogleFonts.dmSerifDisplay(
-                    fontSize: isWide ? 42 : 30,
+                    fontSize: isWide ? 40 : (w > 600 ? 30 : 26),
                     color: _kTealLight,
                     fontStyle: FontStyle.italic),
               ),
             ]),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: Text(subtitle,
                 style: GoogleFonts.nunito(
                     color: _kDark.withOpacity(0.55),
-                    fontSize: 14,
+                    fontSize: w > 600 ? 14 : 12.5,
                     height: 1.7)),
           ),
-          const SizedBox(height: 40),
-          _BgImageGrid(items: items, bgImage: bgImage, isWide: isWide),
+          const SizedBox(height: 30),
+          _BgImageGrid(items: items, bgImage: bgImage, screenW: w),
         ],
       ),
     );
   }
 
   // ── CTA ───────────────────────────────────────────────────────
-  Widget _buildCTA(BuildContext context, bool isWide) {
+  Widget _buildCTA(BuildContext context, bool isWide, double hPad) {
     return Container(
-      margin: EdgeInsets.symmetric(
-          horizontal: isWide ? 80 : 24, vertical: isWide ? 16 : 12),
-      padding: EdgeInsets.all(isWide ? 60 : 36),
+      margin: EdgeInsets.symmetric(horizontal: hPad, vertical: 12),
+      padding: EdgeInsets.all(isWide ? 56 : 30),
       decoration: BoxDecoration(
         color: _kDark,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: isWide
-          ? Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Ready to get started?",
-                          style: GoogleFonts.dmSerifDisplay(
-                              color: Colors.white,
-                              fontSize: 38,
-                              fontStyle: FontStyle.italic)),
-                      const SizedBox(height: 12),
-                      Text(
-                          "Book your consultation today. Expert care is just one click away.",
-                          style: GoogleFonts.nunito(
-                              color: Colors.white60,
-                              fontSize: 15,
-                              height: 1.6)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 48),
-                Column(
+          ? Row(children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _CTAButton(
-                        label: "Book Appointment",
-                        filled: true,
-                        onTap: () => context.go('/booking')),
-                    const SizedBox(height: 12),
-                    _CTAButton(
-                        label: "Call Clinic", filled: false, onTap: () {}),
+                    Text("Ready to get started?",
+                        style: GoogleFonts.dmSerifDisplay(
+                            color: Colors.white,
+                            fontSize: 36,
+                            fontStyle: FontStyle.italic)),
+                    const SizedBox(height: 10),
+                    Text(
+                        "Book your consultation today. Expert care is just one click away.",
+                        style: GoogleFonts.nunito(
+                            color: Colors.white60, fontSize: 15, height: 1.6)),
                   ],
                 ),
-              ],
-            )
+              ),
+              const SizedBox(width: 40),
+              Column(children: [
+                _CTAButton(
+                    label: "Book Appointment",
+                    filled: true,
+                    onTap: () => context.go('/booking')),
+                const SizedBox(height: 12),
+                _CTAButton(label: "Call Clinic", filled: false, onTap: () {}),
+              ]),
+            ])
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("Ready to get started?",
                     style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: 26,
                         fontStyle: FontStyle.italic)),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 Text(
                     "Book your consultation today. Expert care is just one click away.",
                     style: GoogleFonts.nunito(
-                        color: Colors.white60, fontSize: 14, height: 1.6)),
-                const SizedBox(height: 28),
+                        color: Colors.white60, fontSize: 13, height: 1.6)),
+                const SizedBox(height: 24),
                 _CTAButton(
                     label: "Book Appointment",
                     filled: true,
                     onTap: () => context.go('/booking')),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 _CTAButton(label: "Call Clinic", filled: false, onTap: () {}),
               ],
             ),
@@ -368,49 +398,65 @@ class _ServicesPageState extends State<ServicesPage>
   }
 }
 
+// ── Hero Stat ─────────────────────────────────────────────────────
+class _HeroStat extends StatelessWidget {
+  final String value, label;
+  const _HeroStat({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(value,
+            style: GoogleFonts.dmSerifDisplay(
+                color: _kTealLight, fontSize: 28, fontStyle: FontStyle.italic)),
+        Text(label,
+            style: GoogleFonts.nunito(
+                color: Colors.white60,
+                fontSize: 11,
+                fontWeight: FontWeight.w600)),
+      ],
+    );
+  }
+}
+
 // ════════════════════════════════════════════════════════════════
-//  _BgImageGrid
-//  Single background image behind a 3-col grid.
-//  Cells are transparent — bg shows through.
-//  On hover → individual cell fills solid.
+//  _BgImageGrid  — responsive cols + cell height
 // ════════════════════════════════════════════════════════════════
 class _BgImageGrid extends StatelessWidget {
   final List<_ServiceItem> items;
   final String bgImage;
-  final bool isWide;
+  final double screenW;
 
   const _BgImageGrid({
     required this.items,
     required this.bgImage,
-    required this.isWide,
+    required this.screenW,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cols = isWide ? 3 : 2;
+    final cols = screenW > 900 ? 3 : (screenW > 600 ? 2 : 1);
+    final cellH = screenW > 900 ? 220.0 : (screenW > 600 ? 200.0 : 175.0);
+    final rows = (items.length / cols).ceil();
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       child: LayoutBuilder(builder: (_, constraints) {
         final cellW = constraints.maxWidth / cols;
-        const cellH = 220.0;
-        final rows = (items.length / cols).ceil();
-
         return Stack(
           children: [
-            // ── Background image fills entire grid ───────────
             SizedBox(
               height: cellH * rows,
               width: constraints.maxWidth,
               child: Image.asset(bgImage, fit: BoxFit.cover),
             ),
-            // ── Dark scrim ────────────────────────────────────
             SizedBox(
               height: cellH * rows,
               width: constraints.maxWidth,
-              child: ColoredBox(color: _kDark.withOpacity(0.48)),
+              child: ColoredBox(color: _kDark.withOpacity(0.50)),
             ),
-            // ── Grid lines ────────────────────────────────────
             SizedBox(
               height: cellH * rows,
               width: constraints.maxWidth,
@@ -418,7 +464,6 @@ class _BgImageGrid extends StatelessWidget {
                 painter: _GridLinePainter(cols: cols, rows: rows, cellH: cellH),
               ),
             ),
-            // ── Cells ─────────────────────────────────────────
             SizedBox(
               height: cellH * rows,
               width: constraints.maxWidth,
@@ -450,9 +495,8 @@ class _GridLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.20)
+      ..color = Colors.white.withOpacity(0.18)
       ..strokeWidth = 0.8;
-
     for (int c = 1; c < cols; c++) {
       final x = size.width / cols * c;
       canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
@@ -468,7 +512,7 @@ class _GridLinePainter extends CustomPainter {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  _GridCell — transparent default, solid teal on hover
+//  _GridCell — mouse hover + touch tap both supported
 // ════════════════════════════════════════════════════════════════
 class _GridCell extends StatefulWidget {
   final _ServiceItem item;
@@ -484,12 +528,13 @@ class _GridCellState extends State<_GridCell>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _anim;
+  bool _active = false;
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 400));
+        vsync: this, duration: const Duration(milliseconds: 240));
     _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
   }
 
@@ -499,153 +544,118 @@ class _GridCellState extends State<_GridCell>
     super.dispose();
   }
 
+  void _show() {
+    if (!_active) {
+      _active = true;
+      _ctrl.forward();
+    }
+  }
+
+  void _hide() {
+    if (_active) {
+      _active = false;
+      _ctrl.reverse();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => _ctrl.forward(),
-      onExit: (_) => _ctrl.reverse(),
-      child: SizedBox(
-        width: widget.width,
-        height: widget.height,
-        child: Stack(
-          children: [
-            // Solid teal fill fades in on hover
-            FadeTransition(
-              opacity: _anim,
-              child: ClipPath(
-                clipper: DiagonalClipper(),
-                child: Container(
-                  color: _kOverlay.withOpacity(0.95),
-                ),
+      onEnter: (_) => _show(),
+      onExit: (_) => _hide(),
+      child: GestureDetector(
+        onTapDown: (_) => _show(),
+        onTapUp: (_) =>
+            Future.delayed(const Duration(milliseconds: 1200), _hide),
+        onTapCancel: _hide,
+        child: SizedBox(
+          width: widget.width,
+          height: widget.height,
+          child: Stack(
+            children: [
+              // Teal overlay
+              FadeTransition(
+                opacity: _anim,
+                child: Container(color: _kOverlay.withOpacity(0.93)),
               ),
-            ),
-
-            // Default: icon + title (fades OUT on hover)
-            FadeTransition(
-              opacity: ReverseAnimation(_anim),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 62,
-                      height: 62,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: Colors.white.withOpacity(0.35), width: 1.5),
-                      ),
-                      child:
-                          Icon(widget.item.icon, color: Colors.white, size: 26),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        widget.item.title,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.nunito(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Hover: title + desc + Book Now (fades IN on hover)
-            // Hover: title + desc + Book Now (Fade + Slide IN on hover)
-            FadeTransition(
-              opacity: _anim,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0.2), // thoda niche se aayega
-                  end: Offset.zero,
-                ).animate(_anim),
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
+              // Default state
+              FadeTransition(
+                opacity: ReverseAnimation(_anim),
+                child: Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        widget.item.title,
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontStyle: FontStyle.italic,
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.13),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: Colors.white.withOpacity(0.30),
+                              width: 1.4),
                         ),
+                        child: Icon(widget.item.icon,
+                            color: Colors.white, size: 23),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        widget.item.desc,
-                        style: GoogleFonts.nunito(
-                          color: Colors.white.withOpacity(0.88),
-                          fontSize: 12.5,
-                          height: 1.6,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Book Now →',
-                        style: GoogleFonts.nunito(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        child: Text(
+                          widget.item.title,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.nunito(
+                              color: Colors.white,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w700),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+              // Hover / tap state
+              FadeTransition(
+                opacity: _anim,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.10),
+                    end: Offset.zero,
+                  ).animate(_anim),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(widget.item.title,
+                            style: GoogleFonts.dmSerifDisplay(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontStyle: FontStyle.italic)),
+                        const SizedBox(height: 8),
+                        Text(widget.item.desc,
+                            style: GoogleFonts.nunito(
+                                color: Colors.white.withOpacity(0.87),
+                                fontSize: 11.5,
+                                height: 1.55)),
+                        const SizedBox(height: 12),
+                        Text('Book Now →',
+                            style: GoogleFonts.nunito(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.4)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-}
-
-class DiagonalClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(0, 0);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height * 0.7);
-    path.lineTo(0, size.height);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-// ── Stat Chip ─────────────────────────────────────────────────────
-class _StatChip extends StatelessWidget {
-  final String value, label;
-  const _StatChip({required this.value, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(value,
-            style: GoogleFonts.dmSerifDisplay(
-                color: _kDark, fontSize: 34, fontStyle: FontStyle.italic)),
-        const SizedBox(height: 4),
-        Text(label,
-            style: GoogleFonts.nunito(
-                color: _kDark.withOpacity(0.45),
-                fontSize: 13,
-                fontWeight: FontWeight.w600)),
-      ],
     );
   }
 }
@@ -675,7 +685,7 @@ class _CTAButtonState extends State<_CTAButton> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
           decoration: BoxDecoration(
             color: widget.filled
                 ? (_hovered ? _kTealLight : Colors.white)
