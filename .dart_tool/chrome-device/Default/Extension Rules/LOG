@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 2026/04/08-18:55:10.474 40dc Creating DB C:\Users\HP\AppData\Local\Temp\flutter_tools.67fe433d\flutter_tools_chrome_device.49b8d48c\Default\Extension Rules since it was missing.
 2026/04/08-18:55:10.487 40dc Reusing MANIFEST C:\Users\HP\AppData\Local\Temp\flutter_tools.67fe433d\flutter_tools_chrome_device.49b8d48c\Default\Extension Rules/MANIFEST-000001
+=======
+2026/04/08-20:57:19.652 b40 Reusing MANIFEST C:\Users\HP\AppData\Local\Temp\flutter_tools.ca1b629b\flutter_tools_chrome_device.a124e646\Default\Extension Rules/MANIFEST-000001
+2026/04/08-20:57:19.653 b40 Recovering log #3
+2026/04/08-20:57:19.654 b40 Reusing old log C:\Users\HP\AppData\Local\Temp\flutter_tools.ca1b629b\flutter_tools_chrome_device.a124e646\Default\Extension Rules/000003.log 
+>>>>>>> muskaan

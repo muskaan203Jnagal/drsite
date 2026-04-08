@@ -369,9 +369,13 @@ class _ContactPageState extends State<ContactPage>
       _InfoCard(
         icon: Icons.location_on_rounded,
         title: 'Visit Us',
-        lines: ['Kartarpur, Jalandhar,', 'Punjab, India 144801'],
+        lines: [
+          'Opp. Vaishno Devi Mandir,',
+          'Gangsar Bazar, Kartarpur,',
+          'Punjab 144001'
+        ],
         onTap: () => _launch(
-            "https://www.google.com/maps/search/Kartarpur+Jalandhar+Punjab"),
+            "https://www.google.com/maps/search/Opp+Vaishno+Devi+Mandir+Gangsar+Bazar+Kartarpur"),
       ),
       const SizedBox(height: 20),
       _InfoCard(
