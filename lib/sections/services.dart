@@ -7,6 +7,7 @@
 // ================================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/header.dart';
@@ -102,6 +103,11 @@ class _ServicesPageState extends State<ServicesPage>
           physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics()),
           scrollbars: false,
+          dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.trackpad,
+          },
         ),
         child: SingleChildScrollView(
           controller: _scrollCtrl,
@@ -569,6 +575,7 @@ class _GridCellState extends State<_GridCell>
       onEnter: (_) => _show(),
       onExit: (_) => _hide(),
       child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTapDown: (_) => _show(),
         onTapUp: (_) =>
             Future.delayed(const Duration(milliseconds: 1200), _hide),
