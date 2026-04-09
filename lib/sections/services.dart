@@ -7,7 +7,6 @@
 // ================================================================
 
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/header.dart';
@@ -98,81 +97,69 @@ class _ServicesPageState extends State<ServicesPage>
 
     return Container(
       color: _kIvory,
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(
-          physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics()),
-          scrollbars: false,
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.trackpad,
-          },
-        ),
-        child: SingleChildScrollView(
-          controller: _scrollCtrl,
-          child: Column(
-            children: [
-              FadeTransition(
-                opacity: _fade(0.0, 0.35),
-                child: SlideTransition(
-                  position: _slideUp(0.0, 0.35),
-                  child: _buildHero(w, isWide, hPad),
+      child: SingleChildScrollView(
+        controller: _scrollCtrl,
+        physics: const ClampingScrollPhysics(),
+        child: Column(
+          children: [
+            FadeTransition(
+              opacity: _fade(0.0, 0.35),
+              child: SlideTransition(
+                position: _slideUp(0.0, 0.35),
+                child: _buildHero(w, isWide, hPad),
+              ),
+            ),
+            FadeTransition(
+              opacity: _fade(0.2, 0.55),
+              child: SlideTransition(
+                position: _slideUp(0.2, 0.55),
+                child: _buildSection(
+                  context: context,
+                  tag: 'DENTAL CARE',
+                  title: 'Dental',
+                  accent: 'Services',
+                  subtitle:
+                      'Complete dental care from routine check-ups to advanced cosmetic treatments — all under one roof.',
+                  items: _kDental,
+                  bgImage: 'assets/images/dentist_service.jpg',
+                  w: w,
+                  isWide: isWide,
+                  hPad: hPad,
                 ),
               ),
-              FadeTransition(
-                opacity: _fade(0.2, 0.55),
-                child: SlideTransition(
-                  position: _slideUp(0.2, 0.55),
-                  child: _buildSection(
-                    context: context,
-                    tag: 'DENTAL CARE',
-                    title: 'Dental',
-                    accent: 'Services',
-                    subtitle:
-                        'Complete dental care from routine check-ups to advanced cosmetic treatments — all under one roof.',
-                    items: _kDental,
-                    bgImage: 'assets/images/dentist_service.jpg',
-                    w: w,
-                    isWide: isWide,
-                    hPad: hPad,
-                  ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: hPad),
+              child: Divider(color: _kTealLight.withOpacity(0.4), thickness: 1),
+            ),
+            FadeTransition(
+              opacity: _fade(0.4, 0.75),
+              child: SlideTransition(
+                position: _slideUp(0.4, 0.75),
+                child: _buildSection(
+                  context: context,
+                  tag: 'SKIN & HAIR',
+                  title: 'Dermatology',
+                  accent: 'Services',
+                  subtitle:
+                      'Expert skin, hair and laser treatments tailored to your unique skin type and beauty goals.',
+                  items: _kDerm,
+                  bgImage: 'assets/images/derma_service.jpg',
+                  w: w,
+                  isWide: isWide,
+                  hPad: hPad,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: hPad),
-                child:
-                    Divider(color: _kTealLight.withOpacity(0.4), thickness: 1),
+            ),
+            FadeTransition(
+              opacity: _fade(0.6, 1.0),
+              child: SlideTransition(
+                position: _slideUp(0.6, 1.0),
+                child: _buildCTA(context, isWide, hPad),
               ),
-              FadeTransition(
-                opacity: _fade(0.4, 0.75),
-                child: SlideTransition(
-                  position: _slideUp(0.4, 0.75),
-                  child: _buildSection(
-                    context: context,
-                    tag: 'SKIN & HAIR',
-                    title: 'Dermatology',
-                    accent: 'Services',
-                    subtitle:
-                        'Expert skin, hair and laser treatments tailored to your unique skin type and beauty goals.',
-                    items: _kDerm,
-                    bgImage: 'assets/images/derma_service.jpg',
-                    w: w,
-                    isWide: isWide,
-                    hPad: hPad,
-                  ),
-                ),
-              ),
-              FadeTransition(
-                opacity: _fade(0.6, 1.0),
-                child: SlideTransition(
-                  position: _slideUp(0.6, 1.0),
-                  child: _buildCTA(context, isWide, hPad),
-                ),
-              ),
-              const SizedBox(height: 80),
-            ],
-          ),
+            ),
+            const SizedBox(height: 80),
+          ],
         ),
       ),
     );
