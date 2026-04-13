@@ -42,8 +42,8 @@ class _Config {
   // EmailJS
   static const serviceId = 'service_f4yvwwb'; // e.g. service_abc123
   static const publicKey = 'wdOoR4hD1NatRrfMw'; // EmailJS Public Key
-  static const adminEmail =
-      'muskaanjnagal@gmail.com'; // e.g. ravinder@gmail.com
+ static const adminEmail = 'drravinderclinics@gmail.com';
+  // e.g. ravinder@gmail.com
   static const bookingTpl = 'template_cuobk2p'; // Template ID
   static const contactTpl = 'template_jbh76ol'; // Template ID
 
